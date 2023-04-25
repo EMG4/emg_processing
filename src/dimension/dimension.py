@@ -14,14 +14,9 @@ from sklearn.preprocessing import StandardScaler
 
 
 #==============================================================================
-# Loads the data
-def load_data(file_name):
-    data = np.loadtxt(file_name, delimiter = " ")
-
-    return data
-#==============================================================================
 # Function peforming PCA
 def pca_func(data, numb_components = 2):
+    
     # Standardize data
     scaler = StandardScaler()
     standardized_data = scaler.fit_transform(data[:, 1:])
@@ -33,13 +28,7 @@ def pca_func(data, numb_components = 2):
     projected = pca.fit_transform(standardized_data)
 
 
-    return projected
+    return projected_data
 #==============================================================================
-# Main function
-def main():
-    data = load_data("data.txt")
-
-    pca_data = pca_func(data, 5)
+# Function perfoming OFNDA
 #==============================================================================
-if __name__ == "__main__"":
-    main()
