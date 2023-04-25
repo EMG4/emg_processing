@@ -5,6 +5,7 @@
 # Date: 2023-04-25
 #==============================================================================
 
+
 import sys
 import math
 import numpy as np
@@ -65,4 +66,3 @@ def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func
 def cnn():
     pass
 #==============================================================================
-

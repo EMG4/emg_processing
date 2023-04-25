@@ -8,7 +8,7 @@
 
 import pandas as pd
 from feature import fe
-from dimension import pca_func
+from dimension import pca_func, ofnda_func
 from classifier import lda, mlp, cnn
 
 
@@ -33,26 +33,35 @@ def main():
     # Second column is labels
     labels = csv_data.iloc[:, :2]
     
+
+    # Performs feature extraction
     feature_data = fe(raw_data)
 
 
-    if(pca = )
+    # Chooses dimension reduction
+    if(pca)
         data = pca_func(feature_data, pca_number_components)
+    elif(ofnda)
+        data = ofnda_func()
     else
         data = feature_data
 
 
-    if()
+    # Chooses classifier
+    if(lda)
         classifier = lda(data, labels, )
 
-    elif()
+    elif(mlp)
         classifier = mlp(data, labels )
 
-    elif()
-        classifier = 
+    elif(cnn)
+        classifier = cnn() 
     else
+        print("no classifier is chosen")
+        exit()
 
 
+    # Saves the trained classifier to a json file
 
 
 #==============================================================================
