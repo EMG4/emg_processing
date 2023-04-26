@@ -54,6 +54,9 @@ def main():
     elif(mlp)
         classifier = mlp(data, labels )
 
+    elif(ann)
+        classifier = ann() 
+
     elif(cnn)
         classifier = cnn() 
     else
