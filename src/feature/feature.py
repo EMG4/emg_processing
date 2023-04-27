@@ -11,12 +11,12 @@ import tsfel
 
 #==============================================================================
 # Feautre extraction
-def fe(csv_data):
+def fe(segment_arr):
 
     # Retrieve feature configuration file to extract temporal and statiscial time domain features
     domain = ("statistical", "temporal")
     cfg = tsfel.get_feature_by_domain(domain, None)
     
     # Perform feature extraction
-    return tsfel.time_series_featues_extractor(cfg, data)
+    return tsfel.time_series_featues_extractor(cfg, segment_arr)
 #==============================================================================

@@ -16,7 +16,7 @@ from classifier import lda, mlp, cnn
 # Loads the data
 def load_data(file_name):
     # Load data
-    data = pd.read_csv(file_name, sep='\t')
+    data = np.loadtxt(file_name, sep='\t')
 
     return data
 #==============================================================================
@@ -24,40 +24,55 @@ def load_data(file_name):
 def main():
     pca_number_components = 7 
     lda_number_components = 10
+    layer_arr = [(15, "relu", 3), (15, "relu", 3), (15, "relu", 3)]
+
 
     # Load data (csv)
-    csv_data = load_data("data.txt")
-
+    data_np_arr = load_data("test.txt")
     # First column is the data
-    raw_data = csv_data.iloc[:, :1]
+    raw_data = data_np_arr[:, 0]
     # Second column is labels
-    labels = csv_data.iloc[:, :2]
+    labels = data_np_arr[:, 1]
+
+
+    # Perform preprocessing
+    # Remove dc offset
+    if(run_rm_offset):
+        raw_data = rm_offset(raw_data, sampling_rate)
+    # Apply bandpass filter
+    if(run_bandpass):
+        raw_data = bandpass(raw_data, sampling_rate)
+    # Apply nothc filter
+    if(run_notch):
+        raw_data = notch()
     
 
+    # Perform segmentation
+    if(run_segmentation):
+        segment_arr, label_arr = segmentation(raw_data, labels, sampling_rate, window_size, overlap, num_classes):
+
+
     # Performs feature extraction
-    feature_data = fe(raw_data)
+    segment_arr = fe(segment_arr)
 
 
     # Chooses dimension reduction
-    if(pca)
-        data = pca_func(feature_data, pca_number_components)
-    elif(ofnda)
-        data = ofnda_func()
+    if(run_pca)
+        segment_arr = pca_func(segment_arr, pca_number_components)
+    elif(run_ofnda)
+        segment_arr = ofnda_func()
     else
-        data = feature_data
+        segment_arr = segment_arr
 
 
     # Chooses classifier
-    if(lda)
-        classifier = lda(data, labels, )
-
-    elif(mlp)
-        classifier = mlp(data, labels )
-
-    elif(ann)
-        classifier = ann() 
-
-    elif(cnn)
+    if(run_lda)
+        classifier = lda(segment_arr, label_arr, traing_set_proportion, lda_number_components)
+    elif(run_mlp)
+        classifier = mlp(segment_arr, label_arr, traing_set_proportion, layers, activation_func, solver_func, learning_rate_model, iterations)
+    elif(run_ann)
+        classifier = ann(segment_arr, label_arr, k_fold_splits, dropout_rate, input_dim, layer_arr, learning_rate, iterations)
+    elif(run_cnn)
         classifier = cnn() 
     else
         print("no classifier is chosen")
