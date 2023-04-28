@@ -8,6 +8,7 @@
 
 import pyemgpipeline as pep
 
+
 #==============================================================================
 # Remove dc offset
 def rm_offset(data, sampling_rate):

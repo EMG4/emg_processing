@@ -6,30 +6,27 @@
 #==============================================================================
 
 
-import sys
-import math
-import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 
 #==============================================================================
 # Function peforming PCA
-def pca_func(data, numb_components = 2):
+def pca_func(segment_arr, numb_components = 2):
     
-    # Standardize data
-    scaler = StandardScaler()
-    standardized_data = scaler.fit_transform(data[:, 1:])
+    for item in segment_arr:
+        # Standardize data
+        scaler = StandardScaler()
+        standardized_data = scaler.fit_transform(item)
 
-    # Perform PCA
-    pca = PCA(n_components = numb_components)
-    pca.fit(standardized_data)
+        # Perform PCA
+        pca = PCA(n_components = numb_components)
+        pca.fit(standardized_data)
 
-    projected = pca.fit_transform(standardized_data)
+        item = pca.fit_transform(standardized_data)
 
 
-    return projected_data
+    return segment_arr
 #==============================================================================
 # Function perfoming OFNDA
 def ofnda_func():

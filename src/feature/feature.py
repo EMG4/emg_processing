@@ -14,9 +14,11 @@ import tsfel
 def fe(segment_arr):
 
     # Retrieve feature configuration file to extract temporal and statiscial time domain features
-    domain = ("statistical", "temporal")
-    cfg = tsfel.get_feature_by_domain(domain, None)
+    cfg = tsfel.get_features_by_domain(domain = None, json_path=None)
     
+    for item in segment_arr:
+        item = tsfel.time_series_featues_extractor(cfg, item)
+
     # Perform feature extraction
-    return tsfel.time_series_featues_extractor(cfg, segment_arr)
+    return segment_arr
 #==============================================================================

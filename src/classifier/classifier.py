@@ -6,10 +6,6 @@
 #==============================================================================
 
 
-import sys
-import math
-import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import KFold
@@ -47,7 +43,7 @@ def lda(data, labels, train_set_proportion, num_components):
     return clf
 #==============================================================================
 # Train MLP
-def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func, learning_rate_model, iterations):
+def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func, learning_rate_model, alpha, iterations):
     # Split into training set and validation set
     training_data, validation_data, training_data_labels, validation_data_labels = train_test_split(data, labels, train_size=train_set_proportion)
 
@@ -55,7 +51,7 @@ def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func
     training_data, training_data_labels = class_imb(training_data, training_data_labels)
 
     # Create MLP model
-    clf = MLPClassifier(hidden_layer_sizes=(layers,), activation=activation_func, solver=solver_func, learning_rate=learning_rate_moderl, max_iter=iterations)
+    clf = MLPClassifier(hidden_layer_sizes=(layers,), activation=activation_func, solver=solver_func, learning_rate=learning_rate_model, learning_rate_init = alpha, max_iter=iterations)
     # Train on test data
     clf.fit(training_data, training_data_labels)
     
@@ -66,7 +62,7 @@ def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func
     return clf
 #==============================================================================
 # Train ANN
-    def ann(data, labels, num_splits, dropout_rate, input_dim, layer_arr, alpha, num_epochs):
+def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_epochs, activation_func, neurons, max_norm):
     # Fix class imbalance
     data, labels = class_imb(data, labels)
 
@@ -84,8 +80,8 @@ def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func
         # Create input layer
         model.add(Dropout(dropout_rate, input_shape=(input_dim,)))
         # Creates hidden layers
-        for layer_struct in layer_arr:
-            model.add(Dense(layer_struct[0], activation=layer_struct[1], kernel_constraint=MaxNorm(layer_struct[2])))
+        for l in layers:
+            model.add(Dense(neurons, activation=activation_func, kernel_constraint=MaxNorm(max_norm)))
             model.add(Dropout(dropout_rate))
         # Output layer
         model.add(Dense(1, activation='sigmoid'))
