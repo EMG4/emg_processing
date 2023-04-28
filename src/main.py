@@ -41,8 +41,8 @@ def main(argv):
     parser.add_argument('--rcnn', default=False, type = bool, help = "Run CNN")
     # Segmentation parameters
     parser.add_argument('--hz', default=1000, type = int, help = "Set sampling rate")
-    parser.add_argument('--ws', default=250, type = int, help = "Set window size")
-    parser.add_argument('--ol', default=100, type = int, help = "Set window overlap")
+    parser.add_argument('--ws', default=0.250, type = int, help = "Set window size (s)")
+    parser.add_argument('--ol', default=0.100, type = int, help = "Set window overlap (s)")
     parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
     # Dimension Reduction parameters 
     parser.add_argument('--pcanc', default=10, type = int, help = "Set amount of PCA components")
