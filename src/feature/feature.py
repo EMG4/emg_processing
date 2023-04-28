@@ -7,6 +7,7 @@
 
 
 import tsfel
+import numpy as np
 
 
 #==============================================================================
@@ -17,7 +18,8 @@ def fe(segment_arr):
     cfg = tsfel.get_features_by_domain(domain = None, json_path=None)
     
     for item in segment_arr:
-        item = tsfel.time_series_featues_extractor(cfg, item)
+        # tsfel does not accept numpy array so we have to convery to python list, then convert back to numpy
+        item = tsfel.time_series_features_extractor(cfg, item)
 
     # Perform feature extraction
     return segment_arr

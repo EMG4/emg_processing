@@ -114,7 +114,7 @@ def main(argv):
         classifier = mlp(segment_arr, label_arr, args.tsp, args.l, args.af, args.sf, args.lrm, args.a, args.i)
     elif(args.rann):
         classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.a, args.i, args.af, args.n, args.mn)
-    elif(arg.rcnn):
+    elif(args.rcnn):
         classifier = cnn() 
     else:
         print("no classifier is chosen")
