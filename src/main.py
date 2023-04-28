@@ -45,7 +45,7 @@ def main(argv):
     parser.add_argument('--ol', default=0.100, type = int, help = "Set window overlap (s)")
     parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
     # Dimension Reduction parameters 
-    parser.add_argument('--pcanc', default=10, type = int, help = "Set amount of PCA components")
+    parser.add_argument('--pcanc', default=1, type = int, help = "Set amount of PCA components")
     # Multiple classifier parameters
     parser.add_argument('--tsp', default=0.8, type = float, help = "Set training set proportions")
     parser.add_argument('-i', default=100, type = int, help = "Set number of iterations")
@@ -53,7 +53,7 @@ def main(argv):
     parser.add_argument('--af', default='relu', type = str, help = "Set activation function")
     parser.add_argument('-a', default=0.1, type = float, help = "Set learning rate, alpha")
     # LDA parameters
-    parser.add_argument('--ldanc', default=10, type = int, help = "Set amount of LDA components")
+    parser.add_argument('--ldanc', default=8, type = int, help = "Set amount of LDA components")
     # MLP parameters
     parser.add_argument('--sf', default='adam', type = str, help = "Set solver function")
     parser.add_argument('--lrm', default='constant', type = str, help = "Set learning rate model")
@@ -81,10 +81,10 @@ def main(argv):
     # Perform preprocessing
     # Remove dc offset
     if(args.ro):
-        raw_data = rm_offset(raw_data, sampling_rate)
+        raw_data = rm_offset(raw_data, args.hz)
     # Apply bandpass filter
     if(args.rb):
-        raw_data = bandpass(raw_data, sampling_rate)
+        raw_data = bandpass(raw_data, args.hz)
     # Apply nothc filter
     if(args.rn):
         raw_data = notch()
@@ -95,7 +95,7 @@ def main(argv):
 
 
     # Performs feature extraction
-    segment_arr = fe(segment_arr)
+    segment_arr = fe(segment_arr, args.hz)
 
 
     # Chooses dimension reduction

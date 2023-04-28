@@ -8,19 +8,32 @@
 
 import tsfel
 import numpy as np
+import pandas as pd
 
 
 #==============================================================================
 # Feautre extraction
-def fe(segment_arr):
+def fe(segment_arr, sampling_frequency):
 
-    # Retrieve feature configuration file to extract temporal and statiscial time domain features
+    a = []
+
+    # Retrieve feature configuration file
     cfg = tsfel.get_features_by_domain(domain = None, json_path=None)
     
+    # Perform feature extraction on every segment
     for item in segment_arr:
-        # tsfel does not accept numpy array so we have to convery to python list, then convert back to numpy
-        item = tsfel.time_series_features_extractor(cfg, item)
+        # Have to convert to pandas since tsfel doesn't work on numpy, then transform back
+        temp_panda = pd.DataFrame(np.hstack(item), columns=["EMG signal"])
+        temp_result = tsfel.time_series_features_extractor(cfg, temp_panda, fs = sampling_frequency, verbose = 0)
+        
+        temp_numpy = temp_result.to_numpy(copy=True)
+        # Transpose to make sure we have them as individual features
+        temp_transpose = temp_numpy.transpose()
+
+        a.append(temp_transpose)
+
 
     # Perform feature extraction
-    return segment_arr
+    temp_arr = np.array(a)
+    return temp_arr
 #==============================================================================

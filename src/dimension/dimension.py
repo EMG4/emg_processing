@@ -15,6 +15,8 @@ from sklearn.preprocessing import StandardScaler
 def pca_func(segment_arr, numb_components = 2):
     
     for item in segment_arr:
+        print(item)
+        print(item.shape)
         # Standardize data
         scaler = StandardScaler()
         standardized_data = scaler.fit_transform(item)
@@ -24,6 +26,8 @@ def pca_func(segment_arr, numb_components = 2):
         pca.fit(standardized_data)
 
         item = pca.fit_transform(standardized_data)
+        print(item)
+        print(item.shape)
 
 
     return segment_arr
