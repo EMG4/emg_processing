@@ -53,7 +53,7 @@ def main(argv):
     parser.add_argument('--af', default='relu', type = str, help = "Set activation function")
     parser.add_argument('-a', default=0.1, type = float, help = "Set learning rate, alpha")
     # LDA parameters
-    parser.add_argument('--ldanc', default=8, type = int, help = "Set amount of LDA components")
+    parser.add_argument('--ldanc', default=1, type = int, help = "Set amount of LDA components")
     # MLP parameters
     parser.add_argument('--sf', default='adam', type = str, help = "Set solver function")
     parser.add_argument('--lrm', default='constant', type = str, help = "Set learning rate model")

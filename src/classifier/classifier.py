@@ -6,6 +6,7 @@
 #==============================================================================
 
 
+import numpy as np
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import KFold
@@ -15,6 +16,19 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 
 
+#==============================================================================
+# Scikit doesn't accept vector classes, it expects integers
+def class_vector_to_integer(labels):
+    # New array that will hold integer for which class it belongs to instead of class vector
+    int_arr = []
+    # Go through all segments
+    for vector in labels:
+        # Convert vector to int
+        class_int = np.argmax(vector)
+        # Add int to the new int array
+        int_arr.append(class_int)
+    # Return int array that will replace class vector array
+    return np.array(int_arr)
 #==============================================================================
 # Fix class imbalance
 def class_imb(training_data, training_data_labels):
@@ -28,6 +42,10 @@ def lda(data, labels, train_set_proportion, num_components):
     # Split into training set and validation set
     training_data, validation_data, training_data_labels, validation_data_labels = train_test_split(data, labels, train_size=train_set_proportion)
 
+    # Scikit doesn't accept vector classes, it expects integers
+    training_data_labels = class_vector_to_integer(training_data_labels)
+    validation_data_labels = class_vector_to_integer(validation_data_labels)
+
     # Fix class imbalance in training set
     training_data, training_data_labels = class_imb(training_data, training_data_labels)
 
@@ -38,7 +56,7 @@ def lda(data, labels, train_set_proportion, num_components):
 
 
     # Check accuracy
-    clf.score(validation_data, validation_data_labels)
+    print(clf.score(validation_data, validation_data_labels))
 
     return clf
 #==============================================================================
@@ -46,6 +64,9 @@ def lda(data, labels, train_set_proportion, num_components):
 def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func, learning_rate_model, alpha, iterations):
     # Split into training set and validation set
     training_data, validation_data, training_data_labels, validation_data_labels = train_test_split(data, labels, train_size=train_set_proportion)
+    # Scikit doesn't accept vector classes, it expects integers
+    training_data_labels = class_vector_to_integer(training_data_labels)
+    validation_data_labels = class_vector_to_integer(validation_data_labels)
 
     # Fix class imbalance in training set
     training_data, training_data_labels = class_imb(training_data, training_data_labels)
@@ -57,7 +78,7 @@ def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func
     
 
     # Check accuracy
-    clf.score(validation_data, validation_data_labels)
+    print(clf.score(validation_data, validation_data_labels))
 
     return clf
 #==============================================================================

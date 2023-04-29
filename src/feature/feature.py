@@ -28,9 +28,9 @@ def fe(segment_arr, sampling_frequency):
         
         temp_numpy = temp_result.to_numpy(copy=True)
         # Transpose to make sure we have them as individual features
-        temp_transpose = temp_numpy.transpose()
-
-        a.append(temp_transpose)
+        #temp_transpose = temp_numpy.transpose()
+        #a.append(temp_transpose)
+        a.append(temp_numpy[0])
 
 
     # Perform feature extraction
