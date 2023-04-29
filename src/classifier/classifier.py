@@ -14,6 +14,9 @@ from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import RandomOverSampler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.constraints import MaxNorm
+from tensorflow.keras.optimizers import Adam
 
 
 #==============================================================================
@@ -89,7 +92,7 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
 
     total_accuracy = 0.0
     # Performs k fold cross validation
-    kfold = KFold(num_splits, True)
+    kfold = KFold(n_splits = num_splits)
     for train, test in kfold.split(data):
 
         data_train, data_test = data[train], data[test]
@@ -101,14 +104,14 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
         # Create input layer
         model.add(Dropout(dropout_rate, input_shape=(input_dim,)))
         # Creates hidden layers
-        for l in layers:
+        for l in range(layers):
             model.add(Dense(neurons, activation=activation_func, kernel_constraint=MaxNorm(max_norm)))
             model.add(Dropout(dropout_rate))
         # Output layer
         model.add(Dense(1, activation='sigmoid'))
 
         # Define loss function. optimizer/solver, and any other metrics to report
-        optimiz = Adam(learning_rate=alpha)
+        optimiz = Adam(learning_rate=alpha, name="Adam")
         model.compile(loss='categorical_crossentropy', optimizer=optimiz, metrics=['accuracy'])
 
         # Train the model
