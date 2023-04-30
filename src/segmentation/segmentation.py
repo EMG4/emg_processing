@@ -55,6 +55,8 @@ def segmentation(data, labels, sampling_rate, window_size, overlap, num_classes)
             label_arr = np.append(label_arr, [class_vector], axis = 0)
 
 
+        # increment with window size-overlap
+        # Break if next increment would contain samples that are outside the data
         t = t + (window_size-overlap)
         if ((t*1000) >= (data_length-window_size)):
             break

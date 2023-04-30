@@ -100,7 +100,9 @@ def main(argv):
 
     # Chooses dimension reduction
     if(args.rpca):
+        print(segment_arr)
         segment_arr = pca_func(segment_arr, args.pcanc)
+        print(segment_arr)
     elif(args.rofnda):
         segment_arr = ofnda_func()
     else:
