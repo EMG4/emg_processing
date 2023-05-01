@@ -45,7 +45,7 @@ def main(argv):
     parser.add_argument('--ol', default=0.100, type = int, help = "Set window overlap (s)")
     parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
     # Dimension Reduction parameters 
-    parser.add_argument('--pcanc', default=1, type = int, help = "Set amount of PCA components")
+    parser.add_argument('--pcanc', default=2, type = int, help = "Set amount of PCA components")
     # Multiple classifier parameters
     parser.add_argument('--tsp', default=0.8, type = float, help = "Set training set proportions")
     parser.add_argument('-i', default=100, type = int, help = "Set number of iterations")
@@ -53,7 +53,7 @@ def main(argv):
     parser.add_argument('--af', default='relu', type = str, help = "Set activation function")
     parser.add_argument('-a', default=0.1, type = float, help = "Set learning rate, alpha")
     # LDA parameters
-    parser.add_argument('--ldanc', default=1, type = int, help = "Set amount of LDA components")
+    parser.add_argument('--ldanc', default=None, help = "Set amount of LDA components")
     # MLP parameters
     parser.add_argument('--sf', default='adam', type = str, help = "Set solver function")
     parser.add_argument('--lrm', default='constant', type = str, help = "Set learning rate model")
@@ -100,9 +100,7 @@ def main(argv):
 
     # Chooses dimension reduction
     if(args.rpca):
-        print(segment_arr)
         segment_arr = pca_func(segment_arr, args.pcanc)
-        print(segment_arr)
     elif(args.rofnda):
         segment_arr = ofnda_func()
     else:

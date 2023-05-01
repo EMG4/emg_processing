@@ -29,6 +29,7 @@ def segmentation(data, labels, sampling_rate, window_size, overlap, num_classes)
         
         # Create array first time we run
         if t == 0:
+            # Array brackets to correctly store each segment as an array withing the larger array
             segment_arr = np.array([data_segment.data])
 
             # Figure out majoirty class of that segment
@@ -37,12 +38,15 @@ def segmentation(data, labels, sampling_rate, window_size, overlap, num_classes)
             majority_class = round(np.average(label_segment.data))
             class_vector = np.zeros(num_classes)
             class_vector[majority_class] = 1
+            # Array brackets to correctly store each class vector as an array(vector) withing the larger array
             label_arr = np.array([class_vector])
         # Else append segments on the existing segment array
         else:
-            last_val = data_segment.data[-1]
+            average_val = np.average(data_segment.data)
+            # If it is to little data for an entire segment(which is needed for it to be added to the array where all other arrays are of said length)
+            # Fill it up with average
             while(data_segment.data.shape[0] < (window_size*1000 + 1)):
-                data_segment.data = np.append(data_segment.data, last_val)
+                data_segment.data = np.append(data_segment.data, average_val)
 
             segment_arr = np.append(segment_arr, [data_segment.data], axis = 0)
 

@@ -16,6 +16,13 @@ import numpy as np
 def pca_func(segment_arr, numb_components):
     run_entire = 1
     
+    # Can not have more components than min of features and samples
+    min_feature_samples = np.min(segment_arr.shape)
+    if(min_feature_samples<numb_components):
+        print(f"Number of principal components were reduced from", {numb_components}, "to", {min_feature_samples},", because of min(features, samples)")
+        numb_components = min_feature_samples
+
+    # I think this approach is correct
     # Run PCA on entire segment_arr
     if(run_entire == 1):
         # Standardize data

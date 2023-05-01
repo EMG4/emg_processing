@@ -11,6 +11,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
 from imblearn.over_sampling import RandomOverSampler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
@@ -60,6 +61,8 @@ def lda(data, labels, train_set_proportion, num_components):
 
     # Check accuracy
     print(clf.score(validation_data, validation_data_labels))
+    predictions = clf.predict(validation_data)
+    print(confusion_matrix(validation_data_labels, predictions))
 
     return clf
 #==============================================================================
@@ -82,6 +85,8 @@ def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func
 
     # Check accuracy
     print(clf.score(validation_data, validation_data_labels))
+    predictions = clf.predict(validation_data)
+    print(confusion_matrix(validation_data_labels, predictions))
 
     return clf
 #==============================================================================
