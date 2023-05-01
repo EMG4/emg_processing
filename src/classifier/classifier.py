@@ -18,6 +18,7 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Dropout
 from tensorflow.keras.constraints import MaxNorm
 from tensorflow.keras.optimizers import Adam
+from tensorflow.data import Dataset
 
 
 #==============================================================================
@@ -91,7 +92,14 @@ def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func
     return clf
 #==============================================================================
 # Train ANN
-def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_epochs, activation_func, neurons, max_norm):
+def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_epochs, activation_func, neurons, max_norm, b_size):
+
+    # Batch size must be smaller than number of samples
+    number_samples = data.shape[0]
+    if(number_samples<b_size):
+        print(f"Batch size was reduced from", {b_size}, "to", {number_samples},", because of number of samples")
+        b_size = number_samples
+
     # Fix class imbalance
     data, labels = class_imb(data, labels)
 
@@ -102,6 +110,11 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
 
         data_train, data_test = data[train], data[test]
         label_train, label_test = labels[train], labels[test]
+
+        train_dataset = Dataset.from_tensor_slices((data_train, label_train))
+        validation_dataset = Dataset.from_tensor_slices((data_test, label_test))
+        train_dataset = train_dataset.batch(b_size, drop_remainder=False)
+        validation_dataset = validation_dataset.batch(b_size, drop_remainder=False)
 
         # Sequential NN model
         model = Sequential()
@@ -120,10 +133,11 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
         model.compile(loss='categorical_crossentropy', optimizer=optimiz, metrics=['accuracy'])
 
         # Train the model
-        model.fit(data_train, label_train, epochs=num_epochs)
+        model.fit(train_dataset, epochs=num_epochs, validation_data=validation_dataset, verbose=0, batch_size = b_size)
 
         # Evalute the model
         _, accuracy = model.evaluate(data_test, label_test)
+        print('Accuracy: %.2f' % (accuracy))
         total_accuracy = total_accuracy + accuracy
 
     # Calculate and print mean accuracy

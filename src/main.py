@@ -58,10 +58,11 @@ def main(argv):
     parser.add_argument('--sf', default='adam', type = str, help = "Set solver function")
     parser.add_argument('--lrm', default='constant', type = str, help = "Set learning rate model")
     # ANN parameters
-    parser.add_argument('-k', default=3, type = int, help = "Set k for k fold cross validation")
+    parser.add_argument('-k', default=5, type = int, help = "Set k for k fold cross validation")
     parser.add_argument('--dr', default=0.2, type = float, help = "Set dropout rate")
-    parser.add_argument('-n', default=20, type = int, help = "Set number of neurons")
+    parser.add_argument('-n', default=10, type = int, help = "Set number of neurons")
     parser.add_argument('-mn', default=3, type = int, help = "Set maximum norm of the weights")
+    parser.add_argument('-bs', default=10, type = int, help = "Set batch size")
 
 
     args = parser.parse_args(argv)
@@ -114,7 +115,7 @@ def main(argv):
         classifier = mlp(segment_arr, label_arr, args.tsp, args.l, args.af, args.sf, args.lrm, args.a, args.i)
     elif(args.rann):
         input_dim = segment_arr.shape[1]
-        classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.a, args.i, args.af, args.n, args.mn)
+        classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.a, args.i, args.af, args.n, args.mn, args.bs)
     elif(args.rcnn):
         classifier = cnn() 
     else:
