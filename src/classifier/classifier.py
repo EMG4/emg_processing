@@ -116,6 +116,7 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
         train_dataset = train_dataset.batch(b_size, drop_remainder=False)
         validation_dataset = validation_dataset.batch(b_size, drop_remainder=False)
 
+
         # Sequential NN model
         model = Sequential()
         # Add drop out to prevent overfitting

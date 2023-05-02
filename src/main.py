@@ -30,10 +30,10 @@ def main(argv):
     parser = argparse.ArgumentParser(prog = "main.py", description = "EMG finger movement identification")
 
     # Options
-    parser.add_argument('--ro', default=False, type = bool, help = "Run remove dc offset")
-    parser.add_argument('--rb', default=False, type = bool, help = "Run apply bandpass filter")
-    parser.add_argument('--rn', default=False, type = bool, help = "Run apply notch filter")
-    parser.add_argument('--rpca', default=False, type = bool, help = "Run apply PCA")
+    parser.add_argument('--ro', default=True, type = bool, help = "Run remove dc offset")
+    parser.add_argument('--rb', default=True, type = bool, help = "Run apply bandpass filter")
+    parser.add_argument('--rn', default=True, type = bool, help = "Run apply notch filter")
+    parser.add_argument('--rpca', default=True, type = bool, help = "Run apply PCA")
     parser.add_argument('--rofnda', default=False, type = bool, help = "Run apply OFNDA")
     parser.add_argument('--rlda', default=False, type = bool, help = "Run LDA")
     parser.add_argument('--rmlp', default=False, type = bool, help = "Run MLP")
@@ -48,10 +48,10 @@ def main(argv):
     parser.add_argument('--pcanc', default=2, type = int, help = "Set amount of PCA components")
     # Multiple classifier parameters
     parser.add_argument('--tsp', default=0.8, type = float, help = "Set training set proportions")
-    parser.add_argument('-i', default=100, type = int, help = "Set number of iterations")
-    parser.add_argument('-l', default=3, type = int, help = "Set number of layers")
+    parser.add_argument('-i', default=200, type = int, help = "Set number of iterations")
+    parser.add_argument('-l', default=1, type = int, help = "Set number of layers")
     parser.add_argument('--af', default='relu', type = str, help = "Set activation function")
-    parser.add_argument('-a', default=0.1, type = float, help = "Set learning rate, alpha")
+    parser.add_argument('-a', default=0.01, type = float, help = "Set learning rate, alpha")
     # LDA parameters
     parser.add_argument('--ldanc', default=None, help = "Set amount of LDA components")
     # MLP parameters
@@ -59,7 +59,7 @@ def main(argv):
     parser.add_argument('--lrm', default='constant', type = str, help = "Set learning rate model")
     # ANN parameters
     parser.add_argument('-k', default=5, type = int, help = "Set k for k fold cross validation")
-    parser.add_argument('--dr', default=0.2, type = float, help = "Set dropout rate")
+    parser.add_argument('--dr', default=0.1, type = float, help = "Set dropout rate")
     parser.add_argument('-n', default=10, type = int, help = "Set number of neurons")
     parser.add_argument('-mn', default=3, type = int, help = "Set maximum norm of the weights")
     parser.add_argument('-bs', default=10, type = int, help = "Set batch size")
@@ -88,7 +88,7 @@ def main(argv):
         raw_data = bandpass(raw_data, args.hz)
     # Apply nothc filter
     if(args.rn):
-        raw_data = notch()
+        raw_data = notch(raw_data, args.hz)
     
 
     # Perform segmentation
