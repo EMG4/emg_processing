@@ -42,7 +42,7 @@ def main(argv):
     # Segmentation parameters
     parser.add_argument('--hz', default=1000, type = int, help = "Set sampling rate")
     parser.add_argument('--ws', default=0.250, type = int, help = "Set window size (s)")
-    parser.add_argument('--ol', default=0.100, type = int, help = "Set window overlap (s)")
+    parser.add_argument('--ol', default=0.125, type = int, help = "Set window overlap (s)")
     parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
     # Dimension Reduction parameters 
     parser.add_argument('--pcanc', default=2, type = int, help = "Set amount of PCA components")
@@ -115,7 +115,7 @@ def main(argv):
         classifier = mlp(segment_arr, label_arr, args.tsp, args.l, args.af, args.sf, args.lrm, args.a, args.i)
     elif(args.rann):
         input_dim = segment_arr.shape[1]
-        classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.a, args.i, args.af, args.n, args.mn, args.bs)
+        classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.a, args.i, args.af, args.n, args.mn, args.bs, args.nc)
     elif(args.rcnn):
         classifier = cnn() 
     else:

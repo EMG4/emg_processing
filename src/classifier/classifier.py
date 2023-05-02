@@ -22,6 +22,7 @@ from tensorflow.data import Dataset
 
 
 #==============================================================================
+# Converts from class vector to integer class
 # Scikit doesn't accept vector classes, it expects integers
 def class_vector_to_integer(labels):
     # New array that will hold integer for which class it belongs to instead of class vector
@@ -34,6 +35,21 @@ def class_vector_to_integer(labels):
         int_arr.append(class_int)
     # Return int array that will replace class vector array
     return np.array(int_arr)
+#==============================================================================
+# Converts from integer classes to class vector
+def integer_to_class_vector(labels, num_classes):
+    # New array that will hold all class vectors
+    vector_arr = []
+
+    # Go through all segments
+    for int_class in labels:
+        # Create array of zeros
+        class_vector = np.zeros(num_classes)
+        # Set the position (class) which it belongs to to 1
+        class_vector[int_class] = 1
+        vector_arr.append(class_vector)
+
+    return np.array(vector_arr)
 #==============================================================================
 # Fix class imbalance
 def class_imb(training_data, training_data_labels):
@@ -92,7 +108,7 @@ def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func
     return clf
 #==============================================================================
 # Train ANN
-def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_epochs, activation_func, neurons, max_norm, b_size):
+def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_epochs, activation_func, neurons, max_norm, b_size, num_classes):
 
     # Batch size must be smaller than number of samples
     number_samples = data.shape[0]
@@ -100,8 +116,11 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
         print(f"Batch size was reduced from", {b_size}, "to", {number_samples},", because of number of samples")
         b_size = number_samples
 
+    # Class_imb expects integer classes, not class vector
     # Fix class imbalance
-    data, labels = class_imb(data, labels)
+    data, labels = class_imb(data, class_vector_to_integer(labels))
+    # Convert back from integer classes to class vector since ANN keras expects class vector
+    labels = integer_to_class_vector(labels, num_classes)
 
     total_accuracy = 0.0
     # Performs k fold cross validation
@@ -127,7 +146,7 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
             model.add(Dense(neurons, activation=activation_func, kernel_constraint=MaxNorm(max_norm)))
             model.add(Dropout(dropout_rate))
         # Output layer
-        model.add(Dense(1, activation='sigmoid'))
+        model.add(Dense(num_classes, activation='sigmoid'))
 
         # Define loss function. optimizer/solver, and any other metrics to report
         optimiz = Adam(learning_rate=alpha, name="Adam")
@@ -138,12 +157,17 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
 
         # Evalute the model
         _, accuracy = model.evaluate(data_test, label_test)
-        print('Accuracy: %.2f' % (accuracy))
+        print('Accuracy: %.2f' % (accuracy*100))
         total_accuracy = total_accuracy + accuracy
+
+        # Confusion matrix
+        #predictions = model.predict(data_test)
+        #prediction_labels = class_vector_to_integer(label_test)
+        #print(confusion_matrix(prediction_labels, predictions))
 
     # Calculate and print mean accuracy
     total_accuracy = total_accuracy/num_splits
-    print('Accuracy: %.2f' % (total_accuracy*100))
+    print('Total Accuracy: %.2f' % (total_accuracy*100))
 
     return model
 #==============================================================================
