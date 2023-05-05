@@ -20,6 +20,9 @@ from tensorflow.keras.constraints import MaxNorm
 from tensorflow.keras.optimizers import Adam
 from tensorflow.data import Dataset
 
+from optimizer.optimizer import ga
+import config
+
 
 #==============================================================================
 # Converts from class vector to integer class
@@ -108,7 +111,7 @@ def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func
     return clf
 #==============================================================================
 # Train ANN
-def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_epochs, activation_func, neurons, max_norm, b_size, num_classes):
+def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_epochs, activation_func, neurons, max_norm, b_size, num_classes, num_solutions, num_generations, num_parents_mating):
 
     # Batch size must be smaller than number of samples
     number_samples = data.shape[0]
@@ -121,6 +124,27 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
     data, labels = class_imb(data, class_vector_to_integer(labels))
     # Convert back from integer classes to class vector since ANN keras expects class vector
     labels = integer_to_class_vector(labels, num_classes)
+
+
+    # Run GA to optimize parameters
+    # Need to create the structure of the ANN
+    # Sequential NN model
+    config.model = Sequential()
+    # Add drop out to prevent overfitting
+    # Create input layer
+    config.model.add(Dropout(dropout_rate, input_shape=(input_dim,)))
+    # Creates hidden layers
+    for l in range(layers):
+        config.model.add(Dense(neurons, activation=activation_func))
+        config.model.add(Dropout(dropout_rate))
+    # Output layer
+    config.model.add(Dense(num_classes, activation='sigmoid'))
+
+    # Run GA to find optimal parameters
+    config.ga_data = data
+    config.ga_labels = labels
+    best_solution_weights = ga(num_solutions, num_generations, num_parents_mating)
+
 
     total_accuracy = 0.0
     # Performs k fold cross validation
@@ -143,14 +167,16 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
         model.add(Dropout(dropout_rate, input_shape=(input_dim,)))
         # Creates hidden layers
         for l in range(layers):
-            model.add(Dense(neurons, activation=activation_func, kernel_constraint=MaxNorm(max_norm)))
+            model.add(Dense(neurons, activation=activation_func))
             model.add(Dropout(dropout_rate))
         # Output layer
         model.add(Dense(num_classes, activation='sigmoid'))
 
+        # Set the parameters found to be optimal by the GA
+        model.set_weights(best_solution_weights)
+
         # Define loss function. optimizer/solver, and any other metrics to report
-        optimiz = Adam(learning_rate=alpha, name="Adam")
-        model.compile(loss='categorical_crossentropy', optimizer=optimiz, metrics=['accuracy'])
+        model.compile(loss='categorical_crossentropy', optimizer="adam", metrics=['accuracy'])
 
         # Train the model
         model.fit(train_dataset, epochs=num_epochs, validation_data=validation_dataset, verbose=0, batch_size = b_size)
