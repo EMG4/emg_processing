@@ -61,8 +61,13 @@ def main(argv):
     parser.add_argument('-k', default=5, type = int, help = "Set k for k fold cross validation")
     parser.add_argument('--dr', default=0.1, type = float, help = "Set dropout rate")
     parser.add_argument('-n', default=10, type = int, help = "Set number of neurons")
-    parser.add_argument('-mn', default=3, type = int, help = "Set maximum norm of the weights")
-    parser.add_argument('-bs', default=10, type = int, help = "Set batch size")
+    parser.add_argument('--mn', default=3, type = int, help = "Set maximum norm of the weights")
+    parser.add_argument('--bs', default=10, type = int, help = "Set batch size")
+    # GA parameters
+    parser.add_argument('--ns', default=30, type = int, help = "Set number of solutions in the population")
+    parser.add_argument('--ng', default=100, type = int, help = "Set number of generations")
+    parser.add_argument('--npm', default=10, type = int, help = "Set number of parents mating")
+
 
 
     args = parser.parse_args(argv)
@@ -115,7 +120,7 @@ def main(argv):
         classifier = mlp(segment_arr, label_arr, args.tsp, args.l, args.af, args.sf, args.lrm, args.a, args.i)
     elif(args.rann):
         input_dim = segment_arr.shape[1]
-        classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.a, args.i, args.af, args.n, args.mn, args.bs, args.nc)
+        classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.a, args.i, args.af, args.n, args.mn, args.bs, args.nc, args.ns, args.ng, args.npm)
     elif(args.rcnn):
         classifier = cnn() 
     else:

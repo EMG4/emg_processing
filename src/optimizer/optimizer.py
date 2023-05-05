@@ -8,25 +8,28 @@
 
 import pygad.kerasga
 import numpy
+import tensorflow.keras
+
+import config
 
 
 #==============================================================================
 # Fitness function for calculating the fitness of a solution
-def fitness_func(model, data, labels, keras_ga, solution):
+def fitness_func(ga_instance, solution, sol_idx):
 
     # Obtain the parameters from one solution
-    model_weights_matrix = pygad.kerasga.model_weights_as_matrix(model=model, weights_vector=solution)
+    model_weights_matrix = pygad.kerasga.model_weights_as_matrix(model=config.model, weights_vector=solution)
     
     # Use the solutions parameters to set the models parameters
-    model.set_weights(weights=model_weights_matrix)
+    config.model.set_weights(weights=model_weights_matrix)
 
     # The model predicts on all the data
-    predictions = model.predict(data_inputs)
+    predictions = config.model.predict(config.ga_data)
 
     # We check how well it predicted and base it's fitness on how good it predicted
     cce = tensorflow.keras.losses.CategoricalCrossentropy()
     # Add the small value so we don't divide by 0
-    solution_fitness = 1.0 / (cce(data_outputs, predictions).numpy() + 0.00000001)
+    solution_fitness = 1.0 / (cce(config.ga_labels, predictions).numpy() + 0.00000001)
 
     # Return the fitness
     return solution_fitness
@@ -37,14 +40,14 @@ def callback_generation(ga_instance):
     print("Fitness    = {fitness}".format(fitness=ga_instance.best_solution()[1]))
 #==============================================================================
 # Genetic Algorithm for optimization of classifier parameters
-def ga(model, data, labels):
+def ga(num_solutions, num_generations, num_parents_mating):
 
     # Which model to optimize and the number of soultions in the population
-    keras_ga = pygad.kerasga.KerasGA(model=model, num_solutions=num_solutions)
+    keras_ga = pygad.kerasga.KerasGA(model=config.model, num_solutions=num_solutions)
 
     # Cannot have more parents than solutions in the population
     if(num_parents_mating > num_solutions):
-        print(f"Number of parents mating was set to" {num_solutions} "(down from" {num_parents_mating} "), because number of parents mating must be less than number of soultions in the population")
+        print(f"Number of parents mating was set to", {num_solutions}, "(down from", {num_parents_mating}, "), because number of parents mating must be less than number of soultions in the population")
         num_parents_mating = num_solutions
 
     # Create the initial population
@@ -60,7 +63,7 @@ def ga(model, data, labels):
 
     # Get best solution and parameters
     solution, solution_fitness, solution_idx = ga_instance.best_solution()
-    best_solution_weights = pygad.kerasga.model_weights_as_matrix(model=model, weights_vector=solution)
+    best_solution_weights = pygad.kerasga.model_weights_as_matrix(model=config.model, weights_vector=solution)
 
     return best_solution_weights
 #==============================================================================
