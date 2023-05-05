@@ -12,6 +12,8 @@ import tensorflow.keras
 
 import config
 
+import math
+
 
 #==============================================================================
 # Fitness function for calculating the fitness of a solution
@@ -30,6 +32,12 @@ def fitness_func(ga_instance, solution, sol_idx):
     cce = tensorflow.keras.losses.CategoricalCrossentropy()
     # Add the small value so we don't divide by 0
     solution_fitness = 1.0 / (cce(config.ga_labels, predictions).numpy() + 0.00000001)
+
+    if(math.isnan(solution_fitness)):
+        print("dad had a good idea")
+        print(cce(config.ga_labels, predictions).numpy())
+        print(config.ga_labels)
+        print(predictions)
 
     # Return the fitness
     return solution_fitness

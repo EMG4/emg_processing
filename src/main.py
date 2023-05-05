@@ -64,8 +64,8 @@ def main(argv):
     parser.add_argument('--mn', default=3, type = int, help = "Set maximum norm of the weights")
     parser.add_argument('--bs', default=10, type = int, help = "Set batch size")
     # GA parameters
-    parser.add_argument('--ns', default=30, type = int, help = "Set number of solutions in the population")
-    parser.add_argument('--ng', default=100, type = int, help = "Set number of generations")
+    parser.add_argument('--ns', default=50, type = int, help = "Set number of solutions in the population")
+    parser.add_argument('--ng', default=1000, type = int, help = "Set number of generations")
     parser.add_argument('--npm', default=10, type = int, help = "Set number of parents mating")
 
 
@@ -77,7 +77,7 @@ def main(argv):
 
 
     # Load data (csv)
-    data_np_arr = load_data("test.txt")
+    data_np_arr = load_data("data.txt")
     # First column is the data
     raw_data = data_np_arr[:, 0]
     # Second column is labels
