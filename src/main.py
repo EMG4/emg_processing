@@ -33,7 +33,7 @@ def main(argv):
     parser.add_argument('--ro', default=True, type = bool, help = "Run remove dc offset")
     parser.add_argument('--rb', default=True, type = bool, help = "Run apply bandpass filter")
     parser.add_argument('--rn', default=True, type = bool, help = "Run apply notch filter")
-    parser.add_argument('--rpca', default=True, type = bool, help = "Run apply PCA")
+    parser.add_argument('--rpca', default=False, type = bool, help = "Run apply PCA")
     parser.add_argument('--rofnda', default=False, type = bool, help = "Run apply OFNDA")
     parser.add_argument('--rlda', default=False, type = bool, help = "Run LDA")
     parser.add_argument('--rmlp', default=False, type = bool, help = "Run MLP")
@@ -49,7 +49,7 @@ def main(argv):
     # Multiple classifier parameters
     parser.add_argument('--tsp', default=0.8, type = float, help = "Set training set proportions")
     parser.add_argument('-i', default=200, type = int, help = "Set number of iterations")
-    parser.add_argument('-l', default=1, type = int, help = "Set number of layers")
+    parser.add_argument('-l', default=2, type = int, help = "Set number of layers")
     parser.add_argument('--af', default='relu', type = str, help = "Set activation function")
     parser.add_argument('-a', default=0.01, type = float, help = "Set learning rate, alpha")
     # LDA parameters
@@ -61,22 +61,16 @@ def main(argv):
     parser.add_argument('-k', default=5, type = int, help = "Set k for k fold cross validation")
     parser.add_argument('--dr', default=0.1, type = float, help = "Set dropout rate")
     parser.add_argument('-n', default=10, type = int, help = "Set number of neurons")
-    parser.add_argument('--mn', default=3, type = int, help = "Set maximum norm of the weights")
     parser.add_argument('--bs', default=10, type = int, help = "Set batch size")
     # GA parameters
-    parser.add_argument('--ns', default=50, type = int, help = "Set number of solutions in the population")
-    parser.add_argument('--ng', default=1000, type = int, help = "Set number of generations")
-    parser.add_argument('--npm', default=10, type = int, help = "Set number of parents mating")
-
-
+    parser.add_argument('--ns', default=100, type = int, help = "Set number of solutions in the population")
+    parser.add_argument('--ng', default=200, type = int, help = "Set number of generations")
+    parser.add_argument('--npm', default=40, type = int, help = "Set number of parents mating")
 
     args = parser.parse_args(argv)
 
 
-    layer_arr = [(15, "relu", 3), (15, "relu", 3), (15, "relu", 3)]
-
-
-    # Load data (csv)
+    # Load data
     data_np_arr = load_data("data.txt")
     # First column is the data
     raw_data = data_np_arr[:, 0]
@@ -91,7 +85,7 @@ def main(argv):
     # Apply bandpass filter
     if(args.rb):
         raw_data = bandpass(raw_data, args.hz)
-    # Apply nothc filter
+    # Apply notch filter
     if(args.rn):
         raw_data = notch(raw_data, args.hz)
     
@@ -119,8 +113,9 @@ def main(argv):
     elif(args.rmlp):
         classifier = mlp(segment_arr, label_arr, args.tsp, args.l, args.af, args.sf, args.lrm, args.a, args.i)
     elif(args.rann):
+        # Need input dim for the ANN input layer
         input_dim = segment_arr.shape[1]
-        classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.a, args.i, args.af, args.n, args.mn, args.bs, args.nc, args.ns, args.ng, args.npm)
+        classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.sf, args.i, args.af, args.n, args.bs, args.nc, args.ns, args.ng, args.npm)
     elif(args.rcnn):
         classifier = cnn() 
     else:

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #==============================================================================
 # Author: Carl Larsson
-# Description: Performs dimensionallity reduction on input file and provides output file
+# Description: Performs dimensionallity reduction
 # Date: 2023-04-25
 #==============================================================================
 
@@ -33,6 +33,7 @@ def pca_func(segment_arr, numb_components):
         pca = PCA(n_components = numb_components)
         pca.fit(standardized_data)
 
+        # Return PCA processed segment array
         return pca.fit_transform(standardized_data)
     
     # Run PCA on each individual segment
@@ -59,6 +60,7 @@ def pca_func(segment_arr, numb_components):
             a.append(temp)
 
 
+        # Return PCA processed segment array
         return np.array(a)
 #==============================================================================
 # Function perfoming OFNDA

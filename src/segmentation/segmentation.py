@@ -33,14 +33,14 @@ def segmentation(data, labels, sampling_rate, window_size, overlap, num_classes)
             segment_arr = np.array([data_segment.data])
 
             # Figure out majoirty class of that segment
-            # Create vector of zeros, majority class position is set to 1 since this segment belongs to said class
-            # Add class vector to array of labels corresponding to each segment
             majority_class = round(np.average(label_segment.data))
+            # Create vector of zeros, majority class position is set to 1 since this segment belongs to said class
             class_vector = np.zeros(num_classes)
             class_vector[majority_class] = 1
+            # Add class vector to label array, where each class vector corresponds to a segment
             # Array brackets to correctly store each class vector as an array(vector) withing the larger array
             label_arr = np.array([class_vector])
-        # Else append segments on the existing segment array
+        # Else append segments to the existing segment array
         else:
             average_val = np.average(data_segment.data)
             # If it is to little data for an entire segment(which is needed for it to be added to the array where all other arrays are of said length)
@@ -48,14 +48,16 @@ def segmentation(data, labels, sampling_rate, window_size, overlap, num_classes)
             while(data_segment.data.shape[0] < (window_size*1000 + 1)):
                 data_segment.data = np.append(data_segment.data, average_val)
 
+            # Add the segment to the larger array
             segment_arr = np.append(segment_arr, [data_segment.data], axis = 0)
 
             # Figure out majoirty class of that segment
-            # Create vector of zeros, majority class position is set to 1 since this segment belongs to said class
-            # Add class vector to array of labels corresponding to each segment
             majority_class = round(np.average(label_segment.data))
+            # Create vector of zeros, majority class position is set to 1 since this segment belongs to said class
             class_vector = np.zeros(num_classes)
             class_vector[majority_class] = 1
+            # Add class vector to label array, where each class vector corresponds to a segment
+            # Array brackets to correctly store each class vector as an array(vector) withing the larger array
             label_arr = np.append(label_arr, [class_vector], axis = 0)
 
 
@@ -66,5 +68,6 @@ def segmentation(data, labels, sampling_rate, window_size, overlap, num_classes)
             break
 
 
+    # Return segment array and label array
     return segment_arr, label_arr
 #==============================================================================

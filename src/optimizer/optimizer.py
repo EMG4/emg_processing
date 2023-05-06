@@ -11,7 +11,6 @@ import numpy
 import tensorflow.keras
 
 import config
-
 import math
 
 
@@ -26,7 +25,7 @@ def fitness_func(ga_instance, solution, sol_idx):
     config.model.set_weights(weights=model_weights_matrix)
 
     # The model predicts on all the data
-    predictions = config.model.predict(config.ga_data)
+    predictions = config.model.predict(config.ga_data, verbose = 0)
 
     # We check how well it predicted and base it's fitness on how good it predicted
     cce = tensorflow.keras.losses.CategoricalCrossentropy()
@@ -36,8 +35,9 @@ def fitness_func(ga_instance, solution, sol_idx):
     if(math.isnan(solution_fitness)):
         print("dad had a good idea")
         print(cce(config.ga_labels, predictions).numpy())
-        print(config.ga_labels)
-        print(predictions)
+        solution_fitness = 0
+        config.nan_times = config.nan_times + 1
+        print(config.nan_times)
 
     # Return the fitness
     return solution_fitness
@@ -61,6 +61,7 @@ def ga(num_solutions, num_generations, num_parents_mating):
     # Create the initial population
     initial_population = keras_ga.population_weights
 
+    config.nan_times = 0
     # Number of generations and parents mating in the GA
     # Initial population of the GA
     # Which fitness function the GA should use
@@ -73,5 +74,6 @@ def ga(num_solutions, num_generations, num_parents_mating):
     solution, solution_fitness, solution_idx = ga_instance.best_solution()
     best_solution_weights = pygad.kerasga.model_weights_as_matrix(model=config.model, weights_vector=solution)
 
+    # Return the best parameters found
     return best_solution_weights
 #==============================================================================

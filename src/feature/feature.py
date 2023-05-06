@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 #==============================================================================
 # Author: Carl Larsson
-# Description: Performs feature extraction on input file and provides output file
+# Description: Performs feature extraction
 # Date: 2023-04-25
 #==============================================================================
 
@@ -32,5 +32,6 @@ def fe(segment_arr, sampling_frequency):
         a.append(temp_numpy[0])
 
 
+    # Return numpy array containing the feature extracted segments
     return np.array(a)
 #==============================================================================

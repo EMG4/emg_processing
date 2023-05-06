@@ -16,8 +16,6 @@ from imblearn.over_sampling import RandomOverSampler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Dropout
-from tensorflow.keras.constraints import MaxNorm
-from tensorflow.keras.optimizers import Adam
 from tensorflow.data import Dataset
 
 from optimizer.optimizer import ga
@@ -52,14 +50,17 @@ def integer_to_class_vector(labels, num_classes):
         class_vector[int_class] = 1
         vector_arr.append(class_vector)
 
+    # Return array containing class vectors
     return np.array(vector_arr)
 #==============================================================================
 # Fix class imbalance
-def class_imb(training_data, training_data_labels):
+def class_imb(data, labels):
+    # Using random over smampling
     ros = RandomOverSampler()
-    training_data_res, training_data_labels_res = ros.fit_resample(training_data, training_data_labels)
+    data_res, labels_res = ros.fit_resample(data, labels)
 
-    return training_data_res, training_data_labels_res
+    # Return new resampled data and labels
+    return data_res, labels_res
 #==============================================================================
 # Train LDA
 def lda(data, labels, train_set_proportion, num_components):
@@ -84,6 +85,7 @@ def lda(data, labels, train_set_proportion, num_components):
     predictions = clf.predict(validation_data)
     print(confusion_matrix(validation_data_labels, predictions))
 
+    # Return the classifier
     return clf
 #==============================================================================
 # Train MLP
@@ -108,10 +110,11 @@ def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func
     predictions = clf.predict(validation_data)
     print(confusion_matrix(validation_data_labels, predictions))
 
+    # Return the classifier
     return clf
 #==============================================================================
 # Train ANN
-def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_epochs, activation_func, neurons, max_norm, b_size, num_classes, num_solutions, num_generations, num_parents_mating):
+def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, num_epochs, activation_func, neurons, b_size, num_classes, num_solutions, num_generations, num_parents_mating):
 
     # Batch size must be smaller than number of samples
     number_samples = data.shape[0]
@@ -141,11 +144,13 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
     config.model.add(Dense(num_classes, activation='sigmoid'))
 
     # Run GA to find optimal parameters
+    # Need to use global variables since fitness function doesn't accept arguments
     config.ga_data = data
     config.ga_labels = labels
     best_solution_weights = ga(num_solutions, num_generations, num_parents_mating)
 
 
+    # Used to get overall accuracy
     total_accuracy = 0.0
     # Performs k fold cross validation
     kfold = KFold(n_splits = num_splits)
@@ -170,13 +175,14 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
             model.add(Dense(neurons, activation=activation_func))
             model.add(Dropout(dropout_rate))
         # Output layer
+        # One neuron for each class, sigmoid so we get how certain the classifier is on the data belonging to each class
         model.add(Dense(num_classes, activation='sigmoid'))
 
         # Set the parameters found to be optimal by the GA
         model.set_weights(best_solution_weights)
 
-        # Define loss function. optimizer/solver, and any other metrics to report
-        model.compile(loss='categorical_crossentropy', optimizer="adam", metrics=['accuracy'])
+        # Compile the model
+        model.compile(loss='categorical_crossentropy', optimizer=solver_func, metrics=['accuracy'])
 
         # Train the model
         model.fit(train_dataset, epochs=num_epochs, validation_data=validation_dataset, verbose=0, batch_size = b_size)
@@ -186,15 +192,17 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, alpha, num_ep
         print('Accuracy: %.2f' % (accuracy*100))
         total_accuracy = total_accuracy + accuracy
 
-        # Confusion matrix
-        #predictions = model.predict(data_test)
-        #prediction_labels = class_vector_to_integer(label_test)
-        #print(confusion_matrix(prediction_labels, predictions))
 
     # Calculate and print mean accuracy
     total_accuracy = total_accuracy/num_splits
     print('Total Accuracy: %.2f' % (total_accuracy*100))
 
+    # Confusion matrix
+    predictions = class_vector_to_integer(model.predict(data, verbose = 0))
+    prediction_labels = class_vector_to_integer(labels)
+    print(confusion_matrix(prediction_labels, predictions))
+
+    # Return the classifier
     return model
 #==============================================================================
 # Train CNN

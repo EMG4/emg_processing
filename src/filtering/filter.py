@@ -11,7 +11,7 @@ from scipy import signal
 
 
 #==============================================================================
-# Remove dc offset
+# Remove DC offset
 def rm_offset(data, sampling_rate):
     m = pep.wrappers.EMGMeasurement(data, hz=sampling_rate)
     m.apply_dc_offset_remover()
