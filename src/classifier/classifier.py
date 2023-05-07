@@ -66,7 +66,7 @@ def class_imb(data, labels):
     return data_res, labels_res
 #==============================================================================
 # Train LDA
-def lda(data, labels, num_components, num_splits):
+def lda(data, labels, num_components, num_splits, lda_solver):
     # Scikit doesn't accept vector classes, it expects integers
     labels = class_vector_to_integer(labels)
 
@@ -82,7 +82,7 @@ def lda(data, labels, num_components, num_splits):
         data_train, label_train = class_imb(data_train, label_train)
 
         # Create LDA model
-        clf = LinearDiscriminantAnalysis(n_components=num_components)
+        clf = LinearDiscriminantAnalysis(n_components=num_components, solver=lda_solver)
 
         # Train model
         clf.fit(data_train, label_train)
@@ -149,7 +149,6 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
     if(number_samples<b_size):
         print(f"Batch size was reduced from", {b_size}, "to", {number_samples},", because of number of samples")
         b_size = number_samples
-
 
 
     # Run GA to optimize parameters

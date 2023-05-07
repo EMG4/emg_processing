@@ -56,6 +56,7 @@ def main(argv):
     parser.add_argument('-a', default=0.01, type = float, help = "Set learning rate, alpha")
     # LDA parameters
     parser.add_argument('--ldanc', default=None, help = "Set amount of LDA components")
+    parser.add_argument('--ls', default="eigen", help = "Set LDA solver: svd, lsqr, eigen")
     # MLP parameters
     parser.add_argument('--sf', default='adam', type = str, help = "Set solver function")
     parser.add_argument('--lrm', default='constant', type = str, help = "Set learning rate model")
@@ -111,7 +112,7 @@ def main(argv):
 
     # Chooses classifier
     if(args.rlda):
-        classifier = lda(segment_arr, label_arr, args.ldanc, args.k)
+        classifier = lda(segment_arr, label_arr, args.ldanc, args.k, args.ls)
     elif(args.rmlp):
         classifier = mlp(segment_arr, label_arr, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k)
     elif(args.rann):
