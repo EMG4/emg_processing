@@ -111,15 +111,15 @@ def main(argv):
 
     # Chooses classifier
     if(args.rlda):
-        classifier = lda(segment_arr, label_arr, args.tsp, args.ldanc, args.k)
+        classifier = lda(segment_arr, label_arr, args.ldanc, args.k)
     elif(args.rmlp):
-        classifier = mlp(segment_arr, label_arr, args.tsp, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k)
+        classifier = mlp(segment_arr, label_arr, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k)
     elif(args.rann):
         # Need input dim for the ANN input layer
         input_dim = segment_arr.shape[1]
         classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.sf, args.i, args.af, args.n, args.bs, args.nc, args.ns, args.ng, args.npm)
     elif(args.rxgb):
-        classifier = xgboost_classifier(segment_arr, label_arr, args.tsp)
+        classifier = xgboost_classifier(segment_arr, label_arr, args.tsp, args.k)
     else:
         print("no classifier is chosen")
         exit()

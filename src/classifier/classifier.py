@@ -66,48 +66,58 @@ def class_imb(data, labels):
     return data_res, labels_res
 #==============================================================================
 # Train LDA
-def lda(data, labels, train_set_proportion, num_components, num_splits):
-
-    # Split into training set and validation set
-    training_data, validation_data, training_data_labels, validation_data_labels = train_test_split(data, labels, train_size=train_set_proportion)
-
+def lda(data, labels, num_components, num_splits):
     # Scikit doesn't accept vector classes, it expects integers
-    training_data_labels = class_vector_to_integer(training_data_labels)
-    validation_data_labels = class_vector_to_integer(validation_data_labels)
+    labels = class_vector_to_integer(labels)
 
-    # Fix class imbalance in training set
-    training_data, training_data_labels = class_imb(training_data, training_data_labels)
+    total_accuracy = 0
+    # Performs k fold cross validation
+    kfold = KFold(n_splits=num_splits, shuffle=True)
+    for train, test in kfold.split(data):
 
-    # Create LDA model
-    clf = LinearDiscriminantAnalysis(n_components=num_components)
-    # Train on test data
-    clf.fit(training_data, training_data_labels)
+        data_train, data_test = data[train], data[test]
+        label_train, label_test = labels[train], labels[test]
 
+        # Fix class imbalance in training data
+        data_train, label_train = class_imb(data_train, label_train)
+
+        # Create LDA model
+        clf = LinearDiscriminantAnalysis(n_components=num_components)
+
+        # Train model
+        clf.fit(data_train, label_train)
+
+        # Evalute the model
+        accuracy = clf.score(data_test, label_test)
+        total_accuracy = total_accuracy + accuracy
+
+
+    # Calculate and print mean accuracy
+    total_accuracy = total_accuracy/num_splits
+    print('Total Accuracy: %.2f' % (total_accuracy*100))
 
     # Check accuracy
-    print(clf.score(validation_data, validation_data_labels))
-    predictions = clf.predict(validation_data)
-    print(confusion_matrix(validation_data_labels, predictions))
+    predictions = clf.predict(data)
+    print(confusion_matrix(labels, predictions))
 
     # Return the classifier
     return clf
 #==============================================================================
 # Train MLP
-def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func, learning_rate_model, alpha, iterations, num_splits):
+def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model, alpha, iterations, num_splits):
     # Scikit doesn't accept vector classes, it expects integers
     labels = class_vector_to_integer(labels)
 
-    # Fix class imbalance in data
-    data, labels = class_imb(data, labels)
-
-
     total_accuracy = 0
     # Performs k fold cross validation
-    kfold = KFold(n_splits=num_splits)
+    kfold = KFold(n_splits=num_splits, shuffle=True)
     for train, test in kfold.split(data):
 
         data_train, data_test = data[train], data[test]
         label_train, label_test = labels[train], labels[test]
+
+        # Fix class imbalance in training data
+        data_train, label_train = class_imb(data_train, label_train)
 
         # Create MLP model
         clf = MLPClassifier(hidden_layer_sizes=(layers,), activation=activation_func, solver=solver_func, learning_rate=learning_rate_model, learning_rate_init = alpha, max_iter=iterations)
@@ -140,11 +150,6 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
         print(f"Batch size was reduced from", {b_size}, "to", {number_samples},", because of number of samples")
         b_size = number_samples
 
-    # Class_imb expects integer classes, not class vector
-    # Fix class imbalance
-    data, labels = class_imb(data, class_vector_to_integer(labels))
-    # Convert back from integer classes to class vector since ANN keras expects class vector
-    labels = integer_to_class_vector(labels, num_classes)
 
 
     # Run GA to optimize parameters
@@ -171,11 +176,17 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
     # Used to get overall accuracy
     total_accuracy = 0.0
     # Performs k fold cross validation
-    kfold = KFold(n_splits = num_splits)
+    kfold = KFold(n_splits = num_splits, shuffle=True)
     for train, test in kfold.split(data):
 
         data_train, data_test = data[train], data[test]
         label_train, label_test = labels[train], labels[test]
+
+        # Class_imb expects integer classes, not class vector
+        # Fix class imbalance
+        data_train, label_train = class_imb(data_train, class_vector_to_integer(label_train))
+        # Convert back from integer classes to class vector since ANN keras expects class vector
+        label_train = integer_to_class_vector(label_train, num_classes)
 
         train_dataset = Dataset.from_tensor_slices((data_train, label_train))
         validation_dataset = Dataset.from_tensor_slices((data_test, label_test))
@@ -224,31 +235,67 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
     return model
 #==============================================================================
 # XGBoost classifier
-def xgboost_classifier(data, labels, train_set_proportion):
+def xgboost_classifier(data, labels, train_set_proportion, num_splits):
+    run_kfold = 0
 
-    # Split into training set and validation set
-    training_data, validation_data, training_data_labels, validation_data_labels = train_test_split(data, labels, train_size=train_set_proportion)
-    # Scikit doesn't accept vector classes, it expects integers
-    training_data_labels = class_vector_to_integer(training_data_labels)
-    validation_data_labels = class_vector_to_integer(validation_data_labels)
+    if(run_kfold):
+        # Scikit doesn't accept vector classes, it expects integers
+        labels = class_vector_to_integer(labels)
 
-    # Fix class imbalance in training set
-    training_data, training_data_labels = class_imb(training_data, training_data_labels)
+        total_accuracy = 0
+        # Performs k fold cross validation
+        kfold = KFold(n_splits=num_splits, shuffle=True)
+        for train, test in kfold.split(data):
+
+            data_train, data_test = data[train], data[test]
+            label_train, label_test = labels[train], labels[test]
+
+            # Fix class imbalance in training data
+            data_train, label_train = class_imb(data_train, label_train)
+
+            # Create multi class XGBoost classifier
+            bst = XGBClassifier(objective='multi:softprob')
+
+            # Train model
+            bst.fit(data_train, label_train)
+
+            # Evalute the model
+            accuracy = bst.score(data_test, label_test)
+            total_accuracy = total_accuracy + accuracy
 
 
-    # Create multi class XGBoost classifier
-    bst = XGBClassifier(objective='multi:softprob')
+        # Calculate and print mean accuracy
+        total_accuracy = total_accuracy/num_splits
+        print('Total Accuracy: %.2f' % (total_accuracy*100))
 
-    # Train classifer
-    bst.fit(training_data, training_data_labels)
+        # Check accuracy
+        predictions = bst.predict(data)
+        print(confusion_matrix(labels, predictions))
+
+    else:
+        # Split into training set and validation set
+        training_data, validation_data, training_data_labels, validation_data_labels = train_test_split(data, labels, train_size=train_set_proportion)
+        # Scikit doesn't accept vector classes, it expects integers
+        training_data_labels = class_vector_to_integer(training_data_labels)
+        validation_data_labels = class_vector_to_integer(validation_data_labels)
+
+        # Fix class imbalance in training set
+        training_data, training_data_labels = class_imb(training_data, training_data_labels)
 
 
-    # Evalute classifier
-    pred = bst.predict(validation_data)
-    cm = confusion_matrix(validation_data_labels, pred)
-    print(cm)
-    accuracy = accuracy_score(validation_data_labels, pred)
-    print("Accuracy: %.2f%%" % (accuracy * 100.0))
+        # Create multi class XGBoost classifier
+        bst = XGBClassifier(objective='multi:softprob')
+
+        # Train classifer
+        bst.fit(training_data, training_data_labels)
+
+
+        # Evalute classifier
+        pred = bst.predict(validation_data)
+        cm = confusion_matrix(validation_data_labels, pred)
+        print(cm)
+        accuracy = accuracy_score(validation_data_labels, pred)
+        print("Accuracy: %.2f%%" % (accuracy * 100.0))
 
     # Return the tree
     return bst
