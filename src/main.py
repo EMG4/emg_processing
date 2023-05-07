@@ -50,8 +50,8 @@ def main(argv):
     parser.add_argument('--pcanc', default=2, type = int, help = "Set amount of PCA components")
     # Multiple classifier parameters
     parser.add_argument('--tsp', default=0.8, type = float, help = "Set training set proportions")
-    parser.add_argument('-i', default=200, type = int, help = "Set number of iterations")
-    parser.add_argument('-l', default=2, type = int, help = "Set number of layers")
+    parser.add_argument('-i', default=10000, type = int, help = "Set number of iterations")
+    parser.add_argument('-l', default=7, type = int, help = "Set number of layers")
     parser.add_argument('--af', default='relu', type = str, help = "Set activation function")
     parser.add_argument('-a', default=0.01, type = float, help = "Set learning rate, alpha")
     # LDA parameters
@@ -111,9 +111,9 @@ def main(argv):
 
     # Chooses classifier
     if(args.rlda):
-        classifier = lda(segment_arr, label_arr, args.tsp, args.ldanc)
+        classifier = lda(segment_arr, label_arr, args.tsp, args.ldanc, args.k)
     elif(args.rmlp):
-        classifier = mlp(segment_arr, label_arr, args.tsp, args.l, args.af, args.sf, args.lrm, args.a, args.i)
+        classifier = mlp(segment_arr, label_arr, args.tsp, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k)
     elif(args.rann):
         # Need input dim for the ANN input layer
         input_dim = segment_arr.shape[1]

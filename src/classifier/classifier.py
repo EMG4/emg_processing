@@ -14,6 +14,7 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import cross_val_score
 from imblearn.over_sampling import RandomOverSampler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
@@ -65,7 +66,8 @@ def class_imb(data, labels):
     return data_res, labels_res
 #==============================================================================
 # Train LDA
-def lda(data, labels, train_set_proportion, num_components):
+def lda(data, labels, train_set_proportion, num_components, num_splits):
+
     # Split into training set and validation set
     training_data, validation_data, training_data_labels, validation_data_labels = train_test_split(data, labels, train_size=train_set_proportion)
 
@@ -91,26 +93,40 @@ def lda(data, labels, train_set_proportion, num_components):
     return clf
 #==============================================================================
 # Train MLP
-def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func, learning_rate_model, alpha, iterations):
-    # Split into training set and validation set
-    training_data, validation_data, training_data_labels, validation_data_labels = train_test_split(data, labels, train_size=train_set_proportion)
+def mlp(data, labels, train_set_proportion, layers, activation_func, solver_func, learning_rate_model, alpha, iterations, num_splits):
     # Scikit doesn't accept vector classes, it expects integers
-    training_data_labels = class_vector_to_integer(training_data_labels)
-    validation_data_labels = class_vector_to_integer(validation_data_labels)
+    labels = class_vector_to_integer(labels)
 
-    # Fix class imbalance in training set
-    training_data, training_data_labels = class_imb(training_data, training_data_labels)
+    # Fix class imbalance in data
+    data, labels = class_imb(data, labels)
 
-    # Create MLP model
-    clf = MLPClassifier(hidden_layer_sizes=(layers,), activation=activation_func, solver=solver_func, learning_rate=learning_rate_model, learning_rate_init = alpha, max_iter=iterations)
-    # Train on test data
-    clf.fit(training_data, training_data_labels)
-    
+
+    total_accuracy = 0
+    # Performs k fold cross validation
+    kfold = KFold(n_splits=num_splits)
+    for train, test in kfold.split(data):
+
+        data_train, data_test = data[train], data[test]
+        label_train, label_test = labels[train], labels[test]
+
+        # Create MLP model
+        clf = MLPClassifier(hidden_layer_sizes=(layers,), activation=activation_func, solver=solver_func, learning_rate=learning_rate_model, learning_rate_init = alpha, max_iter=iterations)
+
+        # Train model
+        clf.fit(data_train, label_train)
+
+        # Evalute the model
+        accuracy = clf.score(data_test, label_test)
+        total_accuracy = total_accuracy + accuracy
+
+
+    # Calculate and print mean accuracy
+    total_accuracy = total_accuracy/num_splits
+    print('Total Accuracy: %.2f' % (total_accuracy*100))
 
     # Check accuracy
-    print(clf.score(validation_data, validation_data_labels))
-    predictions = clf.predict(validation_data)
-    print(confusion_matrix(validation_data_labels, predictions))
+    predictions = clf.predict(data)
+    print(confusion_matrix(labels, predictions))
 
     # Return the classifier
     return clf
