@@ -13,12 +13,12 @@ import pandas as pd
 
 #==============================================================================
 # Feautre extraction
-def fe(segment_arr, sampling_frequency):
+def fe(segment_arr, sampling_frequency, domain):
     # New array that will contain processed segment_arr, since we cannot directly change in segment_arr
     a = []
 
     # Retrieve feature configuration file
-    cfg = tsfel.get_features_by_domain(domain = None, json_path=None)
+    cfg = tsfel.get_features_by_domain(domain = domain, json_path=None)
     
     # Perform feature extraction on every segment
     for item in segment_arr:

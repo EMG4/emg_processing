@@ -45,7 +45,7 @@ def segmentation(data, labels, sampling_rate, window_size, overlap, num_classes)
             average_val = np.average(data_segment.data)
             # If it is to little data for an entire segment(which is needed for it to be added to the array where all other arrays are of said length)
             # Fill it up with average
-            while(data_segment.data.shape[0] < (window_size*1000 + 1)):
+            while(data_segment.data.shape[0] < segment_arr.shape[1]):
                 data_segment.data = np.append(data_segment.data, average_val)
 
             # Add the segment to the larger array

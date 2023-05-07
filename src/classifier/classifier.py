@@ -7,16 +7,18 @@
 
 
 import numpy as np
+import xgboost as xgb
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
 from imblearn.over_sampling import RandomOverSampler
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.data import Dataset
+from xgboost import XGBClassifier
 
 from optimizer.optimizer import ga
 import config
@@ -205,7 +207,33 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
     # Return the classifier
     return model
 #==============================================================================
-# Train CNN
-def cnn():
-    pass
+# XGBoost classifier
+def xgboost_classifier(data, labels, train_set_proportion):
+
+    # Split into training set and validation set
+    training_data, validation_data, training_data_labels, validation_data_labels = train_test_split(data, labels, train_size=train_set_proportion)
+    # Scikit doesn't accept vector classes, it expects integers
+    training_data_labels = class_vector_to_integer(training_data_labels)
+    validation_data_labels = class_vector_to_integer(validation_data_labels)
+
+    # Fix class imbalance in training set
+    training_data, training_data_labels = class_imb(training_data, training_data_labels)
+
+
+    # Create multi class XGBoost classifier
+    bst = XGBClassifier(objective='multi:softprob')
+
+    # Train classifer
+    bst.fit(training_data, training_data_labels)
+
+
+    # Evalute classifier
+    pred = bst.predict(validation_data)
+    cm = confusion_matrix(validation_data_labels, pred)
+    print(cm)
+    accuracy = accuracy_score(validation_data_labels, pred)
+    print("Accuracy: %.2f%%" % (accuracy * 100.0))
+
+    # Return the tree
+    return bst
 #==============================================================================

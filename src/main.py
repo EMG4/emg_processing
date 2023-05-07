@@ -13,7 +13,7 @@ from filtering.filter import rm_offset, bandpass, notch
 from segmentation.segmentation import segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func, ofnda_func
-from classifier.classifier import lda, mlp, ann, cnn
+from classifier.classifier import lda, mlp, ann, xgboost_classifier
 
 
 #==============================================================================
@@ -30,20 +30,22 @@ def main(argv):
     parser = argparse.ArgumentParser(prog = "main.py", description = "EMG finger movement identification")
 
     # Options
-    parser.add_argument('--ro', default=True, type = bool, help = "Run remove dc offset")
-    parser.add_argument('--rb', default=True, type = bool, help = "Run apply bandpass filter")
-    parser.add_argument('--rn', default=True, type = bool, help = "Run apply notch filter")
-    parser.add_argument('--rpca', default=False, type = bool, help = "Run apply PCA")
+    parser.add_argument('--ro', default=False, type = bool, help = "Run remove dc offset")
+    parser.add_argument('--rb', default=False, type = bool, help = "Run apply bandpass filter")
+    parser.add_argument('--rn', default=False, type = bool, help = "Run apply notch filter")
+    parser.add_argument('--rpca', default=True, type = bool, help = "Run apply PCA")
     parser.add_argument('--rofnda', default=False, type = bool, help = "Run apply OFNDA")
     parser.add_argument('--rlda', default=False, type = bool, help = "Run LDA")
     parser.add_argument('--rmlp', default=False, type = bool, help = "Run MLP")
     parser.add_argument('--rann', default=False, type = bool, help = "Run ANN")
-    parser.add_argument('--rcnn', default=False, type = bool, help = "Run CNN")
+    parser.add_argument('--rxgb', default=False, type = bool, help = "Run XGBoost")
     # Segmentation parameters
-    parser.add_argument('--hz', default=1000, type = int, help = "Set sampling rate")
+    parser.add_argument('--hz', default=150, type = int, help = "Set sampling rate")
     parser.add_argument('--ws', default=0.250, type = int, help = "Set window size (s)")
     parser.add_argument('--ol', default=0.125, type = int, help = "Set window overlap (s)")
     parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
+    # Feature extraction parameters
+    parser.add_argument('-d', default="temporal", help = "Set feature extraction domain: statistical, temporal, spectral or all=None")
     # Dimension Reduction parameters 
     parser.add_argument('--pcanc', default=2, type = int, help = "Set amount of PCA components")
     # Multiple classifier parameters
@@ -95,7 +97,7 @@ def main(argv):
 
 
     # Performs feature extraction
-    segment_arr = fe(segment_arr, args.hz)
+    segment_arr = fe(segment_arr, args.hz, args.d)
 
 
     # Chooses dimension reduction
@@ -116,8 +118,8 @@ def main(argv):
         # Need input dim for the ANN input layer
         input_dim = segment_arr.shape[1]
         classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.sf, args.i, args.af, args.n, args.bs, args.nc, args.ns, args.ng, args.npm)
-    elif(args.rcnn):
-        classifier = cnn() 
+    elif(args.rxgb):
+        classifier = xgboost_classifier(segment_arr, label_arr, args.tsp)
     else:
         print("no classifier is chosen")
         exit()

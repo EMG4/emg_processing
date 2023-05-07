@@ -12,11 +12,15 @@ import tensorflow.keras
 
 import config
 import math
+import pprint
+import sys
 
 
 #==============================================================================
 # Fitness function for calculating the fitness of a solution
 def fitness_func(ga_instance, solution, sol_idx):
+
+    numpy.set_printoptions(threshold=sys.maxsize)
 
     # Obtain the parameters from one solution
     model_weights_matrix = pygad.kerasga.model_weights_as_matrix(model=config.model, weights_vector=solution)
@@ -35,6 +39,9 @@ def fitness_func(ga_instance, solution, sol_idx):
     if(math.isnan(solution_fitness)):
         print("dad had a good idea")
         print(cce(config.ga_labels, predictions).numpy())
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(config.ga_labels)
+        pp.pprint(predictions)
         solution_fitness = 0
         config.nan_times = config.nan_times + 1
         print(config.nan_times)
