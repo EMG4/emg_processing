@@ -104,7 +104,7 @@ def lda(data, labels, num_components, num_splits, lda_solver):
     return clf
 #==============================================================================
 # Train MLP
-def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model, alpha, iterations, num_splits):
+def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model, alpha, iterations, num_splits, train_set_proportion):
     # Scikit doesn't accept vector classes, it expects integers
     labels = class_vector_to_integer(labels)
 
@@ -120,7 +120,7 @@ def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model,
         data_train, label_train = class_imb(data_train, label_train)
 
         # Create MLP model
-        clf = MLPClassifier(hidden_layer_sizes=(layers,), activation=activation_func, solver=solver_func, learning_rate=learning_rate_model, learning_rate_init = alpha, max_iter=iterations)
+        clf = MLPClassifier(hidden_layer_sizes=(layers,), activation=activation_func, solver=solver_func, learning_rate=learning_rate_model, learning_rate_init = alpha, max_iter=iterations, early_stopping=False, validation_fraction=1-train_set_proportion)
 
         # Train model
         clf.fit(data_train, label_train)
@@ -163,7 +163,7 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
         config.model.add(Dense(neurons, activation=activation_func))
         config.model.add(Dropout(dropout_rate))
     # Output layer
-    config.model.add(Dense(num_classes, activation='sigmoid'))
+    config.model.add(Dense(num_classes, activation='softmax'))
 
     # Run GA to find optimal parameters
     # Need to use global variables since fitness function doesn't accept arguments
@@ -204,7 +204,7 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
             model.add(Dropout(dropout_rate))
         # Output layer
         # One neuron for each class, sigmoid so we get how certain the classifier is on the data belonging to each class
-        model.add(Dense(num_classes, activation='sigmoid'))
+        model.add(Dense(num_classes, activation='softmax'))
 
         # Set the parameters found to be optimal by the GA
         model.set_weights(best_solution_weights)
@@ -212,11 +212,9 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
         # Compile the model
         model.compile(loss='categorical_crossentropy', optimizer=solver_func, metrics=['accuracy'])
 
-        # Train the model
-        model.fit(train_dataset, epochs=num_epochs, validation_data=validation_dataset, verbose=0, batch_size = b_size)
 
         # Evalute the model
-        _, accuracy = model.evaluate(data_test, label_test)
+        _, accuracy = model.evaluate(data_test, label_test, verbose = 0)
         print('Accuracy: %.2f' % (accuracy*100))
         total_accuracy = total_accuracy + accuracy
 
@@ -234,7 +232,7 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
     return model
 #==============================================================================
 # XGBoost classifier
-def xgboost_classifier(data, labels, train_set_proportion, num_splits):
+def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_classes):
     run_kfold = 0
 
     if(run_kfold):
@@ -253,7 +251,7 @@ def xgboost_classifier(data, labels, train_set_proportion, num_splits):
             data_train, label_train = class_imb(data_train, label_train)
 
             # Create multi class XGBoost classifier
-            bst = XGBClassifier(objective='multi:softprob')
+            bst = XGBClassifier(objective='multi:softmax', num_class = num_classes, verbosity = 0)
 
             # Train model
             bst.fit(data_train, label_train)
@@ -283,7 +281,7 @@ def xgboost_classifier(data, labels, train_set_proportion, num_splits):
 
 
         # Create multi class XGBoost classifier
-        bst = XGBClassifier(objective='multi:softprob')
+        bst = XGBClassifier(objective='multi:softmax', num_class = num_classes, verbosity = 0)
 
         # Train classifer
         bst.fit(training_data, training_data_labels)

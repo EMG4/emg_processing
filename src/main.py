@@ -47,24 +47,24 @@ def main(argv):
     # Feature extraction parameters
     parser.add_argument('-d', default="temporal", help = "Set feature extraction domain: statistical, temporal, spectral or all=None")
     # Dimension Reduction parameters 
-    parser.add_argument('--pcanc', default=2, type = int, help = "Set amount of PCA components")
+    parser.add_argument('--pcanc', default=2, type = int, help = "Set number of PCA components")
     # Multiple classifier parameters
-    parser.add_argument('--tsp', default=0.8, type = float, help = "Set training set proportions")
+    parser.add_argument('--tsp', default=0.8, type = float, help = "Set training set proportions (between 0 and 1)")
+    parser.add_argument('-k', default=5, type = int, help = "Set k for k fold cross validation")
     parser.add_argument('-i', default=10000, type = int, help = "Set number of iterations")
     parser.add_argument('-l', default=7, type = int, help = "Set number of layers")
-    parser.add_argument('--af', default='relu', type = str, help = "Set activation function")
-    parser.add_argument('-a', default=0.01, type = float, help = "Set learning rate, alpha")
+    parser.add_argument('--af', default='relu', type = str, help = "Set activation function: tanh, relu")
+    parser.add_argument('--sf', default='adam', type = str, help = "Set solver function: sgd, adam")
+    parser.add_argument('-a', default=0.01, type = float, help = "Set learning rate, alpha (between 0 and 1)")
     # LDA parameters
-    parser.add_argument('--ldanc', default=None, help = "Set amount of LDA components")
+    parser.add_argument('--ldanc', default=None, help = "Set number of LDA components")
     parser.add_argument('--ls', default="eigen", help = "Set LDA solver: svd, lsqr, eigen")
     # MLP parameters
-    parser.add_argument('--sf', default='adam', type = str, help = "Set solver function")
-    parser.add_argument('--lrm', default='constant', type = str, help = "Set learning rate model")
+    parser.add_argument('--lrm', default='constant', type = str, help = "Set learning rate model: constant, invscaling, adaptive")
     # ANN parameters
-    parser.add_argument('-k', default=5, type = int, help = "Set k for k fold cross validation")
-    parser.add_argument('--dr', default=0.1, type = float, help = "Set dropout rate")
     parser.add_argument('-n', default=10, type = int, help = "Set number of neurons")
     parser.add_argument('--bs', default=10, type = int, help = "Set batch size")
+    parser.add_argument('--dr', default=0.1, type = float, help = "Set dropout rate")
     # GA parameters
     parser.add_argument('--ns', default=100, type = int, help = "Set number of solutions in the population")
     parser.add_argument('--ng', default=200, type = int, help = "Set number of generations")
@@ -74,7 +74,7 @@ def main(argv):
 
 
     # Load data
-    data_np_arr = load_data("data.txt")
+    data_np_arr = load_data("150hz.txt")
     # First column is the data
     raw_data = data_np_arr[:, 0]
     # Second column is labels
@@ -114,13 +114,13 @@ def main(argv):
     if(args.rlda):
         classifier = lda(segment_arr, label_arr, args.ldanc, args.k, args.ls)
     elif(args.rmlp):
-        classifier = mlp(segment_arr, label_arr, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k)
+        classifier = mlp(segment_arr, label_arr, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k, args.tsp)
     elif(args.rann):
         # Need input dim for the ANN input layer
         input_dim = segment_arr.shape[1]
         classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.sf, args.i, args.af, args.n, args.bs, args.nc, args.ns, args.ng, args.npm)
     elif(args.rxgb):
-        classifier = xgboost_classifier(segment_arr, label_arr, args.tsp, args.k)
+        classifier = xgboost_classifier(segment_arr, label_arr, args.tsp, args.k, args.nc)
     else:
         print("no classifier is chosen")
         exit()
