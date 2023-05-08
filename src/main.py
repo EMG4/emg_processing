@@ -30,6 +30,7 @@ def main(argv):
     parser = argparse.ArgumentParser(prog = "main.py", description = "EMG finger movement identification")
 
     # Options
+    parser.add_argument('-f', required = True, type = str, help = "Choose input file")
     parser.add_argument('--ro', default=False, type = bool, help = "Run remove dc offset")
     parser.add_argument('--rb', default=False, type = bool, help = "Run apply bandpass filter")
     parser.add_argument('--rn', default=False, type = bool, help = "Run apply notch filter")
@@ -40,7 +41,7 @@ def main(argv):
     parser.add_argument('--rann', default=False, type = bool, help = "Run ANN")
     parser.add_argument('--rxgb', default=False, type = bool, help = "Run XGBoost")
     # Segmentation parameters
-    parser.add_argument('--hz', default=150, type = int, help = "Set sampling rate")
+    parser.add_argument('--hz', required = True, type = int, help = "Set sampling rate")
     parser.add_argument('--ws', default=0.250, type = int, help = "Set window size (s)")
     parser.add_argument('--ol', default=0.125, type = int, help = "Set window overlap (s)")
     parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
@@ -74,7 +75,7 @@ def main(argv):
 
 
     # Load data
-    data_np_arr = load_data("150hz.txt")
+    data_np_arr = load_data(args.f)
     # First column is the data
     raw_data = data_np_arr[:, 0]
     # Second column is labels

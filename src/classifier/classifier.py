@@ -96,7 +96,7 @@ def lda(data, labels, num_components, num_splits, lda_solver):
     total_accuracy = total_accuracy/num_splits
     print('Total Accuracy: %.2f' % (total_accuracy*100))
 
-    # Check accuracy
+    # Print confusion matrix
     predictions = clf.predict(data)
     print(confusion_matrix(labels, predictions))
 
@@ -134,7 +134,7 @@ def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model,
     total_accuracy = total_accuracy/num_splits
     print('Total Accuracy: %.2f' % (total_accuracy*100))
 
-    # Check accuracy
+    # Print confusion matrix
     predictions = clf.predict(data)
     print(confusion_matrix(labels, predictions))
 
@@ -265,16 +265,15 @@ def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_class
         total_accuracy = total_accuracy/num_splits
         print('Total Accuracy: %.2f' % (total_accuracy*100))
 
-        # Check accuracy
+        # Print confusion matrix
         predictions = bst.predict(data)
         print(confusion_matrix(labels, predictions))
 
     else:
+        # Scikit doesn't accept vector classes, it expects integers
+        labels = class_vector_to_integer(labels)
         # Split into training set and validation set
         training_data, validation_data, training_data_labels, validation_data_labels = train_test_split(data, labels, train_size=train_set_proportion)
-        # Scikit doesn't accept vector classes, it expects integers
-        training_data_labels = class_vector_to_integer(training_data_labels)
-        validation_data_labels = class_vector_to_integer(validation_data_labels)
 
         # Fix class imbalance in training set
         training_data, training_data_labels = class_imb(training_data, training_data_labels)
@@ -287,12 +286,14 @@ def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_class
         bst.fit(training_data, training_data_labels)
 
 
-        # Evalute classifier
+        # Evalute classifier on validation set
         pred = bst.predict(validation_data)
-        cm = confusion_matrix(validation_data_labels, pred)
-        print(cm)
         accuracy = accuracy_score(validation_data_labels, pred)
         print("Accuracy: %.2f%%" % (accuracy * 100.0))
+
+        # Print confusion matrix
+        predictions = bst.predict(data)
+        print(confusion_matrix(labels, predictions))
 
     # Return the tree
     return bst
