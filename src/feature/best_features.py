@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# List of features available in TSFEL, 'use' to turn on or off features
+# List of best features
 #------------------------------------------------------------------------------
 feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'constant',
     'description': 'Computes the '
