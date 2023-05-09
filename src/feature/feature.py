@@ -9,17 +9,19 @@
 import tsfel
 import numpy as np
 import pandas as pd
+import pprint
+import feature.feature_list as fl
 
 
 #==============================================================================
 # Feautre extraction
-def fe(segment_arr, sampling_frequency, domain):
+def fe(segment_arr, sampling_frequency):
     # New array that will contain processed segment_arr, since we cannot directly change in segment_arr
     a = []
 
     # Retrieve feature configuration file
-    cfg = tsfel.get_features_by_domain(domain = domain, json_path=None)
-    
+    cfg = fl.feature_list
+
     # Perform feature extraction on every segment
     for item in segment_arr:
         # Have to convert to pandas since tsfel doesn't work on numpy, then transform back

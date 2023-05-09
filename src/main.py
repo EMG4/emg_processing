@@ -45,8 +45,6 @@ def main(argv):
     parser.add_argument('--ws', default=0.250, type = int, help = "Set window size (s)")
     parser.add_argument('--ol', default=0.125, type = int, help = "Set window overlap (s)")
     parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
-    # Feature extraction parameters
-    parser.add_argument('-d', default="temporal", help = "Set feature extraction domain: statistical, temporal, spectral or all=None")
     # Dimension Reduction parameters 
     parser.add_argument('--pcanc', default=2, type = int, help = "Set number of PCA components")
     # Multiple classifier parameters
@@ -99,7 +97,7 @@ def main(argv):
 
 
     # Performs feature extraction
-    segment_arr = fe(segment_arr, args.hz, args.d)
+    segment_arr = fe(segment_arr, args.hz)
 
 
     # Chooses dimension reduction
