@@ -11,7 +11,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
     'n_features': 'nfreq',
     'parameters': {   'fs': 100,
         'nfreq': 256},
-    "use":"no"},
+    "use":"yes"},
     'Fundamental frequency': {   'complexity': 'log',
         'description': 'Computes the '
         'fundamental '
@@ -116,7 +116,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
             'function': 'tsfel.spectral_distance',
             'n_features': 1,
             'parameters': {'fs': 100},
-            "use":"no"},
+            "use":"yes"},
     'Spectral entropy': {   'complexity': 'log',
             'description': 'Computes the '
             'spectral entropy '
@@ -205,7 +205,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
             'function': 'tsfel.spectral_spread',
             'n_features': 1,
             'parameters': {'fs': 100},
-            "use":"no"},
+            "use":"yes"},
     'Spectral variation': {   'complexity': 'log',
             'description': 'Computes the '
             'amount of '
@@ -260,7 +260,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
             'parameters': {   'function': 'scipy.signal.ricker',
                 'widths': 'np.arange(1,10)'},
             'tag': 'eeg',
-            "use":"no"},
+            "use":"yes"},
     'Wavelet variance': {   'complexity': 'linear',
             'description': 'Computes CWT '
             'variance value of '
@@ -271,7 +271,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
             'parameters': {   'function': 'scipy.signal.ricker',
                 'widths': 'np.arange(1,10)'},
             'tag': 'eeg',
-            "use":"no"}},
+            "use":"yes"}},
 #------------------------------------------------------------------------------
     'statistical': {   'ECDF': {   'complexity': 'log',
         'description': 'Computes the values of ECDF '
@@ -290,7 +290,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
             'n_features': 'percentile',
             'parameters': {   'percentile': '[0.2, '
                 '0.8]'},
-            "use":"no"},
+            "use":"yes"},
         'ECDF Percentile Count': {   'complexity': 'log',
             'description': 'Determines '
             'the '
@@ -335,7 +335,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
                 'function': 'tsfel.calc_max',
                 'n_features': 1,
                 'parameters': '',
-                "use":"no"},
+                "use":"yes"},
         'Mean': {   'complexity': 'constant',
                 'description': 'Computes the mean value of '
                 'the signal.',
@@ -343,7 +343,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
                 'n_features': 1,
                 'parameters': '',
                 'tag': 'inertial',
-                "use":"no"},
+                "use":"yes"},
         'Mean absolute deviation': {   'complexity': 'log',
                 'description': 'Computes '
                 'mean '
@@ -361,7 +361,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
                 'function': 'tsfel.calc_median',
                 'n_features': 1,
                 'parameters': '',
-                "use":"no"},
+                "use":"yes"},
         'Median absolute deviation': {   'complexity': 'constant',
                 'description': 'Computes '
                 'median '
@@ -388,7 +388,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
                 'n_features': 1,
                 'parameters': '',
                 'tag': ['emg', 'inertial'],
-                "use":"no"},
+                "use":"yes"},
         'Skewness': {   'complexity': 'constant',
                 'description': 'Computes skewness of '
                 'the signal.',
@@ -433,7 +433,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
             'function': 'tsfel.auc',
             'n_features': 1,
             'parameters': {'fs': 100},
-            "use":"no"},
+            "use":"yes"},
         'Autocorrelation': {   'complexity': 'constant',
             'description': 'Computes '
             'autocorrelation of '
@@ -442,7 +442,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
             'n_features': 1,
             'parameters': '',
             'tag': 'inertial',
-            "use":"no"},
+            "use":"yes"},
         'Centroid': {   'complexity': 'constant',
             'description': 'Computes the centroid '
             'along the time axis.',
@@ -467,7 +467,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
             'function': 'tsfel.mean_abs_diff',
             'n_features': 1,
             'parameters': '',
-            "use":"no"},
+            "use":"yes"},
         'Mean diff': {   'complexity': 'constant',
                 'description': 'Computes mean of '
                 'differences of the '
@@ -542,7 +542,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
                 'function': 'tsfel.distance',
                 'n_features': 1,
                 'parameters': '',
-                "use":"no"},
+                "use":"yes"},
         'Slope': {   'complexity': 'log',
                 'description': 'Computes the slope of the '
                 'signal by fitting a linear '
@@ -560,7 +560,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
                 'function': 'tsfel.sum_abs_diff',
                 'n_features': 1,
                 'parameters': '',
-                "use":"no"},
+                "use":"yes"},
         'Total energy': {   'complexity': 'constant',
                 'description': 'Computes the total '
                 'energy of the signal.',
@@ -568,7 +568,7 @@ feature_list = {   'spectral': {   'FFT mean coefficient': {   'complexity': 'co
                 'n_features': 1,
                 'parameters': {'fs': 100},
                 'tag': 'audio',
-                "use":"no"},
+                "use":"yes"},
         'Zero crossing rate': {   'complexity': 'constant',
                 'description': 'Computes '
                 'Zero-crossing '
