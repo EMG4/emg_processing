@@ -140,10 +140,10 @@ def main(argv):
         tflite_model = converter.convert()
 
         # Save model to file
-        with open("trained_classifier.tflite", 'wb') as f:
-            f.write(tflite_model)
+        dir_path = os.path.join(os.getcwd(), "trained_models")
+        tf.saved_model.save(model, dir_path)
 
-        print('Saved TFLite model to:', "trained_classifier.tflite")
+        print('Saved TFLite model to:', dir_path)
     elif(args.rxgb):
         classifier = xgboost_classifier(segment_arr, label_arr, args.tsp, args.k, args.nc)
 
