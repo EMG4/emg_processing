@@ -20,7 +20,7 @@ from classifier.classifier import lda, mlp, ann, xgboost_classifier
 # Loads the data
 def load_data(file_name):
     # Load data
-    data = np.loadtxt(file_name, delimiter='\t')
+    data = np.loadtxt(file_name, delimiter='\t', usecols = (0,1))
 
     return data
 #==============================================================================
@@ -42,8 +42,8 @@ def main(argv):
     parser.add_argument('--rxgb', default=False, type = bool, help = "Run XGBoost")
     # Segmentation parameters
     parser.add_argument('--hz', required = True, type = int, help = "Set sampling rate")
-    parser.add_argument('--ws', default=0.250, type = int, help = "Set window size (s)")
-    parser.add_argument('--ol', default=0.125, type = int, help = "Set window overlap (s)")
+    parser.add_argument('--ws', default=0.250, type = float, help = "Set window size (s)")
+    parser.add_argument('--ol', default=0.125, type = float, help = "Set window overlap (s)")
     parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
     # Dimension Reduction parameters 
     parser.add_argument('--pcanc', default=2, type = int, help = "Set number of PCA components")
@@ -107,7 +107,6 @@ def main(argv):
         segment_arr = ofnda_func()
     else:
         segment_arr = segment_arr
-
 
     # Chooses classifier
     if(args.rlda):
