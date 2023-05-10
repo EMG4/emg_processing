@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 #==============================================================================
 # Author: Carl Larsson
-# Description: Performs dimensionallity reduction on input file and provides output file
+# Description: Main file used for training the classifiers
 # Date: 2023-04-25
 #==============================================================================
 
 
 import sys
 import argparse
+import os
+import pickle
 import numpy as np
+import tensorflow as tf
+from tensorflow import keras
 from filtering.filter import rm_offset, bandpass, notch
 from segmentation.segmentation import segmentation
 from feature.feature import fe
@@ -26,6 +30,8 @@ def load_data(file_name):
 #==============================================================================
 # Main function
 def main(argv):
+    classifier_file = "trained_classifier.txt"
+
 
     parser = argparse.ArgumentParser(prog = "main.py", description = "EMG finger movement identification")
 
@@ -51,7 +57,7 @@ def main(argv):
     parser.add_argument('--tsp', default=0.8, type = float, help = "Set training set proportions (between 0 and 1)")
     parser.add_argument('-k', default=5, type = int, help = "Set k for k fold cross validation")
     parser.add_argument('-i', default=10000, type = int, help = "Set number of iterations")
-    parser.add_argument('-l', default=7, type = int, help = "Set number of layers")
+    parser.add_argument('-l', default=7, type = int, help = "Set number of layers (3 best for ANN, 7 for MLP?)")
     parser.add_argument('--af', default='relu', type = str, help = "Set activation function: tanh, relu")
     parser.add_argument('--sf', default='adam', type = str, help = "Set solver function: sgd, adam")
     parser.add_argument('-a', default=0.01, type = float, help = "Set learning rate, alpha (between 0 and 1)")
@@ -61,7 +67,7 @@ def main(argv):
     # MLP parameters
     parser.add_argument('--lrm', default='constant', type = str, help = "Set learning rate model: constant, invscaling, adaptive")
     # ANN parameters
-    parser.add_argument('-n', default=10, type = int, help = "Set number of neurons")
+    parser.add_argument('-n', default=5, type = int, help = "Set number of neurons (between input size and output size)")
     parser.add_argument('--bs', default=10, type = int, help = "Set batch size")
     parser.add_argument('--dr', default=0.1, type = float, help = "Set dropout rate")
     # GA parameters
@@ -108,25 +114,46 @@ def main(argv):
     else:
         segment_arr = segment_arr
 
+
     # Chooses classifier
     if(args.rlda):
         classifier = lda(segment_arr, label_arr, args.ldanc, args.k, args.ls)
+
+        # Save classifier to a binary file
+        file = open(classifier_file, 'wb')
+        pickle.dump(classifier, file)
+        print('Saved LDA classifier to:', classifier_file)
     elif(args.rmlp):
         classifier = mlp(segment_arr, label_arr, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k, args.tsp)
+
+        # Save classifier to a binary file
+        file = open(classifier_file, 'wb')
+        pickle.dump(classifier, file)
+        print('Saved MLP classifier to:', classifier_file)
     elif(args.rann):
         # Need input dim for the ANN input layer
         input_dim = segment_arr.shape[1]
-        classifier = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.sf, args.i, args.af, args.n, args.bs, args.nc, args.ns, args.ng, args.npm)
+        model = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.sf, args.i, args.af, args.n, args.bs, args.nc, args.ns, args.ng, args.npm)
+
+        # Convert model to TF lite model
+        converter = tf.lite.TFLiteConverter.from_keras_model(model)
+        tflite_model = converter.convert()
+
+        # Save model to file
+        with open("trained_classifier.tflite", 'wb') as f:
+            f.write(tflite_model)
+
+        print('Saved TFLite model to:', "trained_classifier.tflite")
     elif(args.rxgb):
         classifier = xgboost_classifier(segment_arr, label_arr, args.tsp, args.k, args.nc)
+
+        # Save classifier to a binary file
+        file = open(classifier_file, 'wb')
+        pickle.dump(classifier, file)
+        print('Saved XGB classifier to:', classifier_file)
     else:
-        print("no classifier is chosen")
-        exit()
-
-
-    # Saves the trained classifier to a json file
-
-
+        print("No classifier is chosen")
 #==============================================================================
 if __name__ == "__main__":
     main(sys.argv[1:])
+#==============================================================================

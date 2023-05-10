@@ -219,6 +219,8 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
         total_accuracy = total_accuracy + accuracy
 
 
+    print(model.summary())
+
     # Calculate and print mean accuracy
     total_accuracy = total_accuracy/num_splits
     print('Total Accuracy: %.2f' % (total_accuracy*100))

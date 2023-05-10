@@ -10,7 +10,7 @@ import tsfel
 import numpy as np
 import pandas as pd
 import pprint
-import feature.best_features as fl
+import feature.feature_list as fl
 
 
 #==============================================================================
@@ -20,9 +20,9 @@ def fe(segment_arr, sampling_frequency):
     a = []
 
     # Retrieve feature configuration file
-    #cfg = fl.feature_list
+    cfg = fl.feature_list
     # Get features by domain
-    cfg = tsfel.get_features_by_domain("temporal")
+    #cfg = tsfel.get_features_by_domain("temporal")
 
     # Perform feature extraction on every segment
     for item in segment_arr:
