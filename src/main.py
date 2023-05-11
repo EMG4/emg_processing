@@ -30,7 +30,6 @@ def load_data(file_name):
 #==============================================================================
 # Main function
 def main(argv):
-    classifier_file = "trained_classifier.txt"
 
 
     parser = argparse.ArgumentParser(prog = "main.py", description = "EMG finger movement identification")
@@ -120,6 +119,7 @@ def main(argv):
         classifier = lda(segment_arr, label_arr, args.ldanc, args.k, args.ls)
 
         # Save classifier to a binary file
+        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_lda_classifier.txt")
         file = open(classifier_file, 'wb')
         pickle.dump(classifier, file)
         print('Saved LDA classifier to:', classifier_file)
@@ -127,6 +127,7 @@ def main(argv):
         classifier = mlp(segment_arr, label_arr, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k, args.tsp)
 
         # Save classifier to a binary file
+        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_mlp_classifier.txt")
         file = open(classifier_file, 'wb')
         pickle.dump(classifier, file)
         print('Saved MLP classifier to:', classifier_file)
@@ -140,7 +141,7 @@ def main(argv):
         tflite_model = converter.convert()
 
         # Save model to file
-        dir_path = os.path.join(os.getcwd(), "trained_models")
+        dir_path = os.path.join(os.getcwd(), "trained_tf_models")
         tf.saved_model.save(model, dir_path)
 
         print('Saved TFLite model to:', dir_path)
@@ -148,6 +149,7 @@ def main(argv):
         classifier = xgboost_classifier(segment_arr, label_arr, args.tsp, args.k, args.nc)
 
         # Save classifier to a binary file
+        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_xgb_classifier.txt")
         file = open(classifier_file, 'wb')
         pickle.dump(classifier, file)
         print('Saved XGB classifier to:', classifier_file)
