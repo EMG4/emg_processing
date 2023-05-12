@@ -17,6 +17,7 @@ def segmentation(data, labels, sampling_rate, window_size, overlap, num_classes)
     segment_arr = None
     label_arr = None
 
+
     # Find length of data
     data_length = data.shape[0]
     t = 0
@@ -64,7 +65,7 @@ def segmentation(data, labels, sampling_rate, window_size, overlap, num_classes)
         # increment with window size-overlap
         # Break if next increment would contain samples that are outside the data
         t = t + (window_size-overlap)
-        if ((t*1000) >= (data_length-window_size)):
+        if (t >= ((data_length/sampling_rate)-window_size)):
             break
 
 
