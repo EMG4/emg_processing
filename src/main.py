@@ -12,7 +12,7 @@ import os
 import pickle
 import numpy as np
 import tensorflow as tf
-from tensorflow import keras
+#from tensorflow import keras
 from filtering.filter import rm_offset, bandpass, notch
 from segmentation.segmentation import segmentation
 from feature.feature import fe
@@ -30,8 +30,6 @@ def load_data(file_name):
 #==============================================================================
 # Main function
 def main(argv):
-
-
     parser = argparse.ArgumentParser(prog = "main.py", description = "EMG finger movement identification")
 
     # Options
@@ -137,14 +135,14 @@ def main(argv):
         model = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.sf, args.i, args.af, args.n, args.bs, args.nc, args.ns, args.ng, args.npm)
 
         # Convert model to TF lite model
-        converter = tf.lite.TFLiteConverter.from_keras_model(model)
-        tflite_model = converter.convert()
+        #converter = tf.lite.TFLiteConverter.from_keras_model(model)
+        #tflite_model = converter.convert()
 
         # Save model to file
         dir_path = os.path.join(os.getcwd(), "trained_tf_models")
         tf.saved_model.save(model, dir_path)
 
-        print('Saved TFLite model to:', dir_path)
+        print('Saved TF ANN model to:', dir_path)
     elif(args.rxgb):
         classifier = xgboost_classifier(segment_arr, label_arr, args.tsp, args.k, args.nc)
 

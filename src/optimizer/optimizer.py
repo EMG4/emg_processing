@@ -19,9 +19,6 @@ import sys
 #==============================================================================
 # Fitness function for calculating the fitness of a solution
 def fitness_func(ga_instance, solution, sol_idx):
-
-    numpy.set_printoptions(threshold=sys.maxsize)
-
     # Obtain the parameters from one solution
     model_weights_matrix = pygad.kerasga.model_weights_as_matrix(model=config.model, weights_vector=solution)
     
@@ -36,8 +33,9 @@ def fitness_func(ga_instance, solution, sol_idx):
     # Add the small value so we don't divide by 0
     solution_fitness = 1.0 / (cce(config.ga_labels, predictions).numpy() + 0.00000001)
 
+    # Used for debuging of an issue that causes cross categorical entropy to return NaN, causing an index error
+    numpy.set_printoptions(threshold=sys.maxsize)
     if(math.isnan(solution_fitness)):
-        print("dad had a good idea")
         print(cce(config.ga_labels, predictions).numpy())
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(config.ga_labels)
@@ -56,7 +54,6 @@ def callback_generation(ga_instance):
 #==============================================================================
 # Genetic Algorithm for optimization of classifier parameters
 def ga(num_solutions, num_generations, num_parents_mating):
-
     # Which model to optimize and the number of soultions in the population
     keras_ga = pygad.kerasga.KerasGA(model=config.model, num_solutions=num_solutions)
 
@@ -68,6 +65,8 @@ def ga(num_solutions, num_generations, num_parents_mating):
     # Create the initial population
     initial_population = keras_ga.population_weights
 
+    # See fitness_func
+    # Used for debuging of an issue that causes cross categorical entropy to return NaN, causing an index error
     config.nan_times = 0
     # Number of generations and parents mating in the GA
     # Initial population of the GA

@@ -7,14 +7,11 @@
 
 
 import numpy as np
-import xgboost as xgb
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import KFold
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import cross_val_score
 from imblearn.over_sampling import RandomOverSampler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
@@ -31,12 +28,14 @@ import config
 def class_vector_to_integer(labels):
     # New array that will hold integer for which class it belongs to instead of class vector
     int_arr = []
+
     # Go through all segments
     for vector in labels:
         # Convert vector to int
         class_int = np.argmax(vector)
         # Add int to the new int array
         int_arr.append(class_int)
+
     # Return int array that will replace class vector array
     return np.array(int_arr)
 #==============================================================================
@@ -98,6 +97,8 @@ def lda(data, labels, num_components, num_splits, lda_solver):
 
     # Print confusion matrix
     predictions = clf.predict(data)
+    accuracy = accuracy_score(labels, predictions)
+    print(accuracy)
     print(confusion_matrix(labels, predictions))
 
     # Return the classifier
@@ -136,6 +137,8 @@ def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model,
 
     # Print confusion matrix
     predictions = clf.predict(data)
+    accuracy = accuracy_score(labels, predictions)
+    print(accuracy)
     print(confusion_matrix(labels, predictions))
 
     # Return the classifier
@@ -143,7 +146,6 @@ def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model,
 #==============================================================================
 # Train ANN
 def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, num_epochs, activation_func, neurons, b_size, num_classes, num_solutions, num_generations, num_parents_mating):
-
     # Batch size must be smaller than number of samples
     number_samples = data.shape[0]
     if(number_samples<b_size):
@@ -228,6 +230,8 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
     # Confusion matrix
     predictions = class_vector_to_integer(model.predict(data, verbose = 0))
     prediction_labels = class_vector_to_integer(labels)
+    accuracy = accuracy_score(prediction_labels, predictions)
+    print(accuracy)
     print(confusion_matrix(prediction_labels, predictions))
 
     # Return the classifier
@@ -235,67 +239,40 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
 #==============================================================================
 # XGBoost classifier
 def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_classes):
-    run_kfold = 0
+    # Scikit doesn't accept vector classes, it expects integers
+    labels = class_vector_to_integer(labels)
 
-    if(run_kfold):
-        # Scikit doesn't accept vector classes, it expects integers
-        labels = class_vector_to_integer(labels)
+    total_accuracy = 0
+    # Performs k fold cross validation
+    kfold = KFold(n_splits=num_splits, shuffle=True)
+    for train, test in kfold.split(data):
 
-        total_accuracy = 0
-        # Performs k fold cross validation
-        kfold = KFold(n_splits=num_splits, shuffle=True)
-        for train, test in kfold.split(data):
+        data_train, data_test = data[train], data[test]
+        label_train, label_test = labels[train], labels[test]
 
-            data_train, data_test = data[train], data[test]
-            label_train, label_test = labels[train], labels[test]
-
-            # Fix class imbalance in training data
-            data_train, label_train = class_imb(data_train, label_train)
-
-            # Create multi class XGBoost classifier
-            bst = XGBClassifier(objective='multi:softmax', num_class = num_classes, verbosity = 0)
-
-            # Train model
-            bst.fit(data_train, label_train)
-
-            # Evalute the model
-            accuracy = bst.score(data_test, label_test)
-            total_accuracy = total_accuracy + accuracy
-
-
-        # Calculate and print mean accuracy
-        total_accuracy = total_accuracy/num_splits
-        print('Total Accuracy: %.2f' % (total_accuracy*100))
-
-        # Print confusion matrix
-        predictions = bst.predict(data)
-        print(confusion_matrix(labels, predictions))
-
-    else:
-        # Scikit doesn't accept vector classes, it expects integers
-        labels = class_vector_to_integer(labels)
-        # Split into training set and validation set
-        training_data, validation_data, training_data_labels, validation_data_labels = train_test_split(data, labels, train_size=train_set_proportion)
-
-        # Fix class imbalance in training set
-        training_data, training_data_labels = class_imb(training_data, training_data_labels)
-
+        # Fix class imbalance in training data
+        data_train, label_train = class_imb(data_train, label_train)
 
         # Create multi class XGBoost classifier
         bst = XGBClassifier(objective='multi:softmax', num_class = num_classes, verbosity = 0)
 
-        # Train classifer
-        bst.fit(training_data, training_data_labels)
+        # Train model
+        bst.fit(data_train, label_train)
+
+        # Evalute the model
+        accuracy = bst.score(data_test, label_test)
+        total_accuracy = total_accuracy + accuracy
 
 
-        # Evalute classifier on validation set
-        pred = bst.predict(validation_data)
-        accuracy = accuracy_score(validation_data_labels, pred)
-        print("Accuracy: %.2f%%" % (accuracy * 100.0))
+    # Calculate and print mean accuracy
+    total_accuracy = total_accuracy/num_splits
+    print('Total Accuracy: %.2f' % (total_accuracy*100))
 
-        # Print confusion matrix
-        predictions = bst.predict(data)
-        print(confusion_matrix(labels, predictions))
+    # Print confusion matrix
+    predictions = bst.predict(data)
+    accuracy = accuracy_score(labels, predictions)
+    print(accuracy)
+    print(confusion_matrix(labels, predictions))
 
     # Return the tree
     return bst
