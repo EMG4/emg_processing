@@ -8,7 +8,11 @@
 
 import numpy as np
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import KFold
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
@@ -82,6 +86,86 @@ def lda(data, labels, num_components, num_splits, lda_solver):
 
         # Create LDA model
         clf = LinearDiscriminantAnalysis(n_components=num_components, solver=lda_solver)
+
+        # Train model
+        clf.fit(data_train, label_train)
+
+        # Evalute the model
+        accuracy = clf.score(data_test, label_test)
+        total_accuracy = total_accuracy + accuracy
+
+
+    # Calculate and print mean accuracy
+    total_accuracy = total_accuracy/num_splits
+    print('Total Accuracy: %.2f' % (total_accuracy*100))
+
+    # Print confusion matrix
+    predictions = clf.predict(data)
+    accuracy = accuracy_score(labels, predictions)
+    print(accuracy)
+    print(confusion_matrix(labels, predictions))
+
+    # Return the classifier
+    return clf
+#==============================================================================
+# Train SVM
+def support_vector_machine(data, labels, num_splits):
+    # Scikit doesn't accept vector classes, it expects integers
+    labels = class_vector_to_integer(labels)
+
+    total_accuracy = 0
+    # Performs k fold cross validation
+    kfold = KFold(n_splits=num_splits, shuffle=True)
+    for train, test in kfold.split(data):
+
+        data_train, data_test = data[train], data[test]
+        label_train, label_test = labels[train], labels[test]
+
+        # Fix class imbalance in training data
+        data_train, label_train = class_imb(data_train, label_train)
+
+        # Create SVM classifier
+        clf = make_pipeline(StandardScaler(), SVC(gamma='auto'))
+
+        # Train model
+        clf.fit(data_train, label_train)
+
+        # Evalute the model
+        accuracy = clf.score(data_test, label_test)
+        total_accuracy = total_accuracy + accuracy
+
+
+    # Calculate and print mean accuracy
+    total_accuracy = total_accuracy/num_splits
+    print('Total Accuracy: %.2f' % (total_accuracy*100))
+
+    # Print confusion matrix
+    predictions = clf.predict(data)
+    accuracy = accuracy_score(labels, predictions)
+    print(accuracy)
+    print(confusion_matrix(labels, predictions))
+
+    # Return the classifier
+    return clf
+#==============================================================================
+# Train KNN
+def knn(data, labels, num_splits):
+    # Scikit doesn't accept vector classes, it expects integers
+    labels = class_vector_to_integer(labels)
+
+    total_accuracy = 0
+    # Performs k fold cross validation
+    kfold = KFold(n_splits=num_splits, shuffle=True)
+    for train, test in kfold.split(data):
+
+        data_train, data_test = data[train], data[test]
+        label_train, label_test = labels[train], labels[test]
+
+        # Fix class imbalance in training data
+        data_train, label_train = class_imb(data_train, label_train)
+
+        # Create KNN classifier
+        clf = KNeighborsClassifier()
 
         # Train model
         clf.fit(data_train, label_train)

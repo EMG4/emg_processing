@@ -17,7 +17,7 @@ from filtering.filter import rm_offset, bandpass, notch
 from segmentation.segmentation import segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func, ofnda_func
-from classifier.classifier import lda, mlp, ann, xgboost_classifier
+from classifier.classifier import lda, support_vector_machine, knn, mlp, ann, xgboost_classifier
 
 
 #==============================================================================
@@ -40,6 +40,8 @@ def main(argv):
     parser.add_argument('--rpca', default=True, type = bool, help = "Run apply PCA")
     parser.add_argument('--rofnda', default=False, type = bool, help = "Run apply OFNDA")
     parser.add_argument('--rlda', default=False, type = bool, help = "Run LDA")
+    parser.add_argument('--rsvm', default=False, type = bool, help = "Run SVM")
+    parser.add_argument('--rknn', default=False, type = bool, help = "Run KNN")
     parser.add_argument('--rmlp', default=False, type = bool, help = "Run MLP")
     parser.add_argument('--rann', default=False, type = bool, help = "Run ANN")
     parser.add_argument('--rxgb', default=False, type = bool, help = "Run XGBoost")
@@ -49,7 +51,7 @@ def main(argv):
     parser.add_argument('--ol', default=0.125, type = float, help = "Set window overlap (s)")
     parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
     # Dimension Reduction parameters 
-    parser.add_argument('--pcanc', default=2, type = int, help = "Set number of PCA components")
+    parser.add_argument('--pcanc', default=5, type = int, help = "Set number of PCA components")
     # Multiple classifier parameters
     parser.add_argument('--tsp', default=0.8, type = float, help = "Set training set proportions (between 0 and 1)")
     parser.add_argument('-k', default=5, type = int, help = "Set k for k fold cross validation")
@@ -113,6 +115,7 @@ def main(argv):
 
 
     # Chooses classifier
+    # LDA
     if(args.rlda):
         classifier = lda(segment_arr, label_arr, args.ldanc, args.k, args.ls)
 
@@ -121,6 +124,25 @@ def main(argv):
         file = open(classifier_file, 'wb')
         pickle.dump(classifier, file)
         print('Saved LDA classifier to:', classifier_file)
+    # SVM
+    elif(args.rsvm):
+        classifier = support_vector_machine(segment_arr, label_arr, args.k)
+
+        # Save classifier to a binary file
+        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_svm_classifier.txt")
+        file = open(classifier_file, 'wb')
+        pickle.dump(classifier, file)
+        print('Saved SVM classifier to:', classifier_file)
+    # KNN
+    elif(args.rknn):
+        classifier = knn(segment_arr, label_arr, args.k)
+
+        # Save classifier to a binary file
+        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_knn_classifier.txt")
+        file = open(classifier_file, 'wb')
+        pickle.dump(classifier, file)
+        print('Saved KNN classifier to:', classifier_file)
+    # MLP
     elif(args.rmlp):
         classifier = mlp(segment_arr, label_arr, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k, args.tsp)
 
@@ -129,6 +151,7 @@ def main(argv):
         file = open(classifier_file, 'wb')
         pickle.dump(classifier, file)
         print('Saved MLP classifier to:', classifier_file)
+    # ANN with GA optimization
     elif(args.rann):
         # Need input dim for the ANN input layer
         input_dim = segment_arr.shape[1]
@@ -143,6 +166,7 @@ def main(argv):
         tf.saved_model.save(model, dir_path)
 
         print('Saved TF ANN model to:', dir_path)
+    # XGBoost
     elif(args.rxgb):
         classifier = xgboost_classifier(segment_arr, label_arr, args.tsp, args.k, args.nc)
 
