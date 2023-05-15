@@ -109,7 +109,7 @@ def lda(data, labels, num_components, num_splits, lda_solver):
     return clf
 #==============================================================================
 # Train SVM
-def support_vector_machine(data, labels, num_splits):
+def support_vector_machine(data, labels, num_splits, kernel, gamma, decision_function_shape):
     # Scikit doesn't accept vector classes, it expects integers
     labels = class_vector_to_integer(labels)
 
@@ -125,7 +125,7 @@ def support_vector_machine(data, labels, num_splits):
         data_train, label_train = class_imb(data_train, label_train)
 
         # Create SVM classifier
-        clf = make_pipeline(StandardScaler(), SVC(gamma='auto'))
+        clf = make_pipeline(StandardScaler(), SVC(kernel=kernel, gamma=gamma, decision_function_shape=decision_function_shape))
 
         # Train model
         clf.fit(data_train, label_train)
@@ -149,7 +149,7 @@ def support_vector_machine(data, labels, num_splits):
     return clf
 #==============================================================================
 # Train KNN
-def knn(data, labels, num_splits):
+def knn(data, labels, num_splits, num_neighbors, weight_function, leaf_size):
     # Scikit doesn't accept vector classes, it expects integers
     labels = class_vector_to_integer(labels)
 
@@ -165,7 +165,7 @@ def knn(data, labels, num_splits):
         data_train, label_train = class_imb(data_train, label_train)
 
         # Create KNN classifier
-        clf = KNeighborsClassifier()
+        clf = KNeighborsClassifier(n_neighbors = num_neighbors, weights=weight_function, leaf_size=leaf_size)
 
         # Train model
         clf.fit(data_train, label_train)
@@ -344,7 +344,10 @@ def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_class
         bst.fit(data_train, label_train)
 
         # Evalute the model
-        accuracy = bst.score(data_test, label_test)
+        predictions = bst.predict(data_test)
+        accuracy = accuracy_score(label_test, predictions)
+        #accuracy = bst.score(data_test, label_test)
+        print(accuracy)
         total_accuracy = total_accuracy + accuracy
 
 
