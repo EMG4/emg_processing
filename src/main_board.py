@@ -33,7 +33,7 @@ def load_data(file_name):
 #==============================================================================
 # Main function
 def main(argv):
-    file_name = "trained_classifier.txt"
+    file_name = "trained_knn_classifier.txt"
     sampling_frequency = 1000
     window_size = 0.25
     overlap = 0.125
