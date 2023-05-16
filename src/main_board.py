@@ -5,10 +5,10 @@
 # Date: 2023-05-10
 #==============================================================================
 
-
 import numpy as np
 import tensorflow as tf
 import os
+import serial
 from segmentation.segmentation import data_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func
@@ -16,8 +16,43 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 #==============================================================================
-# Loads the data
-def load_data(file_name):
+
+ser = serial.Serial("/devttyACM1")
+class ReadLine:
+    def __init__(self, s):
+        serlf.buf = bytearray()
+        self.s = s
+    def readline(self):
+        i = self.buf.find(b"\n")
+        if i >= 0:
+            r = self.buf[:i+1]
+            self.buf = self.buf[i+1:]
+            return r
+        while True:
+            i = max(1, min(2048, self.s.sin_waiting))
+            data = self.s.read(i)
+            i = data.find(b"\n")
+            if i >= 0:
+                r = self.buf + data[:i+1]
+                self.buf[0:] = data[i+1:]
+                return r
+            else:
+                self.buf.extend(data)
+def load_data:
+    r1.ReadLine(ser)
+    sample_counter = 0
+    buf = []
+    number_samples_to_load = 375
+    while sample_counter < number_samples_to_load:
+        read_voltage_from_adc = ser.readline()   
+        read_voltage_from_adc = read_voltage_from_adc.decode('utf-8').rstrip('\n').rstrip('\r')
+        print(read_voltage_from_adc)
+        buf.append(read_voltage_from_adc)
+    return buf
+#==============================================================================
+#==============================================================================
+# Loads the ML model or data
+def load_model(file_name):
     tf_model = 0
     
     if(tf_model):
@@ -41,6 +76,7 @@ def main(argv):
     number_principal_components = 5
 
     # Load data
+    read_data_from_ACM1 = load_data()
 
     # Load the model from file
     model = load_data(file_name)
