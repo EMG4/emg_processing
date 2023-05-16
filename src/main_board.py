@@ -6,7 +6,7 @@
 #==============================================================================
 
 import numpy as np
-import tensorflow as tf
+#import tensorflow as tf
 import os
 import serial
 from segmentation.segmentation import data_segmentation
@@ -17,7 +17,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 #==============================================================================
 
-ser = serial.Serial("/devttyACM1")
+ser = serial.Serial("/dev/ttyACM1")
 class ReadLine:
     def __init__(self, s):
         serlf.buf = bytearray()
@@ -38,15 +38,15 @@ class ReadLine:
                 return r
             else:
                 self.buf.extend(data)
-def load_data:
+def load_data():
     r1.ReadLine(ser)
     sample_counter = 0
     buf = []
     number_samples_to_load = 375
     while sample_counter < number_samples_to_load:
         read_voltage_from_adc = ser.readline()   
-        read_voltage_from_adc = read_voltage_from_adc.decode('utf-8').rstrip('\n').rstrip('\r')
         print(read_voltage_from_adc)
+        read_voltage_from_adc = read_voltage_from_adc.decode('utf-8').rstrip('\n').rstrip('\r')
         buf.append(read_voltage_from_adc)
     return buf
 #==============================================================================
@@ -69,7 +69,7 @@ def load_model(file_name):
 # Main function
 def main(argv):
     file_name = "trained_knn_classifier.txt"
-    sampling_frequency = 1000
+    sampling_frequency = 1400
     window_size = 0.25
     overlap = 0.125
     number_classes = 11
@@ -79,7 +79,7 @@ def main(argv):
     read_data_from_ACM1 = load_data()
 
     # Load the model from file
-    model = load_data(file_name)
+    model = load_model(file_name)
 
     # Perform segmentation
     segment_arr, label_arr = data_segmentation(data, sampling_frequency, window_size, overlap, number_classes)
