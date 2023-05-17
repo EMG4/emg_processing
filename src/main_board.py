@@ -14,6 +14,7 @@ from segmentation.segmentation import data_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func
 from sklearn.neighbors import KNeighborsClassifier
+import pickle
 
 
 #==============================================================================
@@ -45,16 +46,16 @@ def load_data():
     buf = []
     number_samples_to_load = 375
     while sample_counter < number_samples_to_load:
-        read_voltage_from_adc = ser.readline()   
-        print(read_voltage_from_adc)
+        read_voltage_from_adc = ser.readline()
         read_voltage_from_adc = read_voltage_from_adc.decode('utf-8').rstrip('\n').rstrip('\r')
+        print(read_voltage_from_adc)
         buf.append(read_voltage_from_adc)
+        sample_counter += 1
     return buf
 #==============================================================================
 # Loads the ML model or data
 def load_model(file_name):
     tf_model = 0
-    
     if(tf_model):
         # Load data (TensorFlow)
         dir_path = os.path.join(os.getcwd(), "trained_models")
@@ -68,19 +69,19 @@ def load_model(file_name):
 #==============================================================================
 # Main function
 def main():
-    file_name = "trained_knn_classifier.txt"
+    file_name = "./trained_scikit_models/trained_knn_classifier.txt"
     sampling_frequency = 1400
     window_size = 0.25
     overlap = 0.125
     number_classes = 11
     number_principal_components = 5
 
+    # Load the model from file
+    model = load_model(file_name)
+
     while(True):
         # Load data
         data = load_data()
-
-        # Load the model from file
-        model = load_model(file_name)
 
         # Perform segmentation
         segment_arr, label_arr = data_segmentation(data, sampling_frequency, window_size, overlap, number_classes)
