@@ -13,7 +13,7 @@ from segmentation.segmentation import data_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func
 from sklearn.neighbors import KNeighborsClassifier
-
+import sys
 
 #==============================================================================
 
@@ -39,7 +39,7 @@ class ReadLine:
             else:
                 self.buf.extend(data)
 def load_data():
-    r1.ReadLine(ser)
+    #r1.ReadLine(ser)
     sample_counter = 0
     buf = []
     number_samples_to_load = 375
