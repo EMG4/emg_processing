@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 #==============================================================================
-# Author: Carl Larsson
+# Authors: Carl Larsson, Pontus Svensson, Samuel Wågbrant
 # Description: Main file used for running the classifier on the board
 # Date: 2023-05-10
 #==============================================================================
+
 
 import numpy as np
 #import tensorflow as tf
@@ -13,10 +14,10 @@ from segmentation.segmentation import data_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func
 from sklearn.neighbors import KNeighborsClassifier
-import sys
+
 
 #==============================================================================
-
+# Function and class for reading data
 ser = serial.Serial("/dev/ttyACM1")
 class ReadLine:
     def __init__(self, s):
@@ -50,7 +51,6 @@ def load_data():
         buf.append(read_voltage_from_adc)
     return buf
 #==============================================================================
-#==============================================================================
 # Loads the ML model or data
 def load_model(file_name):
     tf_model = 0
@@ -67,7 +67,7 @@ def load_model(file_name):
         return classifier
 #==============================================================================
 # Main function
-def main(argv):
+def main():
     file_name = "trained_knn_classifier.txt"
     sampling_frequency = 1400
     window_size = 0.25
@@ -75,26 +75,27 @@ def main(argv):
     number_classes = 11
     number_principal_components = 5
 
-    # Load data
-    read_data_from_ACM1 = load_data()
+    while(True):
+        # Load data
+        data = load_data()
 
-    # Load the model from file
-    model = load_model(file_name)
+        # Load the model from file
+        model = load_model(file_name)
 
-    # Perform segmentation
-    segment_arr, label_arr = data_segmentation(data, sampling_frequency, window_size, overlap, number_classes)
+        # Perform segmentation
+        segment_arr, label_arr = data_segmentation(data, sampling_frequency, window_size, overlap, number_classes)
 
-    # Performs feature extraction
-    segment_arr = fe(segment_arr, sampling_frequency)
+        # Performs feature extraction
+        segment_arr = fe(segment_arr, sampling_frequency)
 
-    # Perform PCA
-    segment_arr = pca_func(segment_arr, number_principal_components)
+        # Perform PCA
+        segment_arr = pca_func(segment_arr, number_principal_components)
 
-    prediction = model.predict(segment_arr)
+        prediction = model.predict(segment_arr)
 
-    print(prediction)
+        print(prediction)
 #==============================================================================
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
 #==============================================================================
 
