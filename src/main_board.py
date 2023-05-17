@@ -14,7 +14,7 @@ from segmentation.segmentation import data_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func
 from sklearn.neighbors import KNeighborsClassifier
-import skops.io as sio
+import pickle5 as pickle
 
 
 #==============================================================================
@@ -64,7 +64,7 @@ def load_model(file_name):
     else:
         # Load data (scikit learn)
         file = open(file_name, 'rb')
-        classifier = sio.load(file, trusted=True)
+        classifier = pickle.load(file)
         return classifier
 #==============================================================================
 # Main function

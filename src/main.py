@@ -9,7 +9,6 @@
 import sys
 import argparse
 import os
-import skops.io as sio
 import numpy as np
 import tensorflow as tf
 #from tensorflow import keras
@@ -18,6 +17,7 @@ from segmentation.segmentation import data_segmentation, label_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func, ofnda_func
 from classifier.classifier import lda, support_vector_machine, knn, mlp, ann, xgboost_classifier
+import pickle5 as pickle
 
 
 #==============================================================================
@@ -146,7 +146,7 @@ def main(argv):
         # Save classifier to a binary file
         classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_knn_classifier.txt")
         file = open(classifier_file, 'wb')
-        sio.dump(classifier, file)
+        pickle.dump(classifier, file)
         print('Saved KNN classifier to:', classifier_file)
     # LDA
     elif(args.rlda):
@@ -155,7 +155,7 @@ def main(argv):
         # Save classifier to a binary file
         classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_lda_classifier.txt")
         file = open(classifier_file, 'wb')
-        sio.dump(classifier, file)
+        pickle.dump(classifier, file)
         print('Saved LDA classifier to:', classifier_file)
     # MLP
     elif(args.rmlp):
@@ -164,7 +164,7 @@ def main(argv):
         # Save classifier to a binary file
         classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_mlp_classifier.txt")
         file = open(classifier_file, 'wb')
-        sio.dump(classifier, file)
+        pickle.dump(classifier, file)
         print('Saved MLP classifier to:', classifier_file)
     # SVM
     elif(args.rsvm):
@@ -173,7 +173,7 @@ def main(argv):
         # Save classifier to a binary file
         classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_svm_classifier.txt")
         file = open(classifier_file, 'wb')
-        sio.dump(classifier, file)
+        pickle.dump(classifier, file)
         print('Saved SVM classifier to:', classifier_file)
     # XGBoost
     elif(args.rxgb):
@@ -182,7 +182,7 @@ def main(argv):
         # Save classifier to a binary file
         classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_xgb_classifier.txt")
         file = open(classifier_file, 'wb')
-        sio.dump(classifier, file)
+        pickle.dump(classifier, file)
         print('Saved XGB classifier to:', classifier_file)
     else:
         print("No classifier is chosen")
