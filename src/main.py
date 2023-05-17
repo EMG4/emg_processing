@@ -17,7 +17,7 @@ from segmentation.segmentation import data_segmentation, label_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func, ofnda_func
 from classifier.classifier import lda, support_vector_machine, knn, mlp, ann, xgboost_classifier
-import pickle5 as pickle
+import pickle
 
 
 #==============================================================================

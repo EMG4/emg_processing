@@ -14,7 +14,7 @@ from segmentation.segmentation import data_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func
 from sklearn.neighbors import KNeighborsClassifier
-import pickle5 as pickle
+import pickle
 
 
 #==============================================================================
