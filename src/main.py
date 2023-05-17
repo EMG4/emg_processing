@@ -9,7 +9,7 @@
 import sys
 import argparse
 import os
-import pickle
+import skops.io as sio
 import numpy as np
 import tensorflow as tf
 #from tensorflow import keras
@@ -124,44 +124,8 @@ def main(argv):
 
 
     # Chooses classifier
-    # LDA
-    if(args.rlda):
-        classifier = lda(segment_arr, label_arr, args.ldanc, args.k, args.ls)
-
-        # Save classifier to a binary file
-        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_lda_classifier.txt")
-        file = open(classifier_file, 'wb')
-        pickle.dump(classifier, file)
-        print('Saved LDA classifier to:', classifier_file)
-    # SVM
-    elif(args.rsvm):
-        classifier = support_vector_machine(segment_arr, label_arr, args.k, args.ker, args.g, args.dfs)
-
-        # Save classifier to a binary file
-        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_svm_classifier.txt")
-        file = open(classifier_file, 'wb')
-        pickle.dump(classifier, file)
-        print('Saved SVM classifier to:', classifier_file)
-    # KNN
-    elif(args.rknn):
-        classifier = knn(segment_arr, label_arr, args.k, args.nn, args.wf, args.nl)
-
-        # Save classifier to a binary file
-        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_knn_classifier.txt")
-        file = open(classifier_file, 'wb')
-        pickle.dump(classifier, file)
-        print('Saved KNN classifier to:', classifier_file)
-    # MLP
-    elif(args.rmlp):
-        classifier = mlp(segment_arr, label_arr, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k, args.tsp)
-
-        # Save classifier to a binary file
-        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_mlp_classifier.txt")
-        file = open(classifier_file, 'wb')
-        pickle.dump(classifier, file)
-        print('Saved MLP classifier to:', classifier_file)
     # ANN with GA optimization
-    elif(args.rann):
+    if(args.rann):
         # Need input dim for the ANN input layer
         input_dim = segment_arr.shape[1]
         model = ann(segment_arr, label_arr, args.k, args.dr, input_dim, args.l, args.sf, args.i, args.af, args.n, args.bs, args.nc, args.ns, args.ng, args.npm)
@@ -175,6 +139,42 @@ def main(argv):
         tf.saved_model.save(model, dir_path)
 
         print('Saved TF ANN model to:', dir_path)
+    # KNN
+    elif(args.rknn):
+        classifier = knn(segment_arr, label_arr, args.k, args.nn, args.wf, args.nl)
+
+        # Save classifier to a binary file
+        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_knn_classifier.txt")
+        file = open(classifier_file, 'wb')
+        sio.dump(classifier, file)
+        print('Saved KNN classifier to:', classifier_file)
+    # LDA
+    elif(args.rlda):
+        classifier = lda(segment_arr, label_arr, args.ldanc, args.k, args.ls)
+
+        # Save classifier to a binary file
+        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_lda_classifier.txt")
+        file = open(classifier_file, 'wb')
+        sio.dump(classifier, file)
+        print('Saved LDA classifier to:', classifier_file)
+    # MLP
+    elif(args.rmlp):
+        classifier = mlp(segment_arr, label_arr, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k, args.tsp)
+
+        # Save classifier to a binary file
+        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_mlp_classifier.txt")
+        file = open(classifier_file, 'wb')
+        sio.dump(classifier, file)
+        print('Saved MLP classifier to:', classifier_file)
+    # SVM
+    elif(args.rsvm):
+        classifier = support_vector_machine(segment_arr, label_arr, args.k, args.ker, args.g, args.dfs)
+
+        # Save classifier to a binary file
+        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_svm_classifier.txt")
+        file = open(classifier_file, 'wb')
+        sio.dump(classifier, file)
+        print('Saved SVM classifier to:', classifier_file)
     # XGBoost
     elif(args.rxgb):
         classifier = xgboost_classifier(segment_arr, label_arr, args.tsp, args.k, args.nc)
@@ -182,7 +182,7 @@ def main(argv):
         # Save classifier to a binary file
         classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_xgb_classifier.txt")
         file = open(classifier_file, 'wb')
-        pickle.dump(classifier, file)
+        sio.dump(classifier, file)
         print('Saved XGB classifier to:', classifier_file)
     else:
         print("No classifier is chosen")
