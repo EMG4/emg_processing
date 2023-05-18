@@ -17,12 +17,16 @@ from sklearn.model_selection import KFold
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 from imblearn.over_sampling import RandomOverSampler
+# XGBoost doesn't work for python 32-bit
+#from xgboost import XGBClassifier
+# TensorFlow doesn't work for python 3.7
+'''
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.data import Dataset
-from xgboost import XGBClassifier
-
 from optimizer.optimizer import ga
+'''
+
 import config
 
 
@@ -228,6 +232,9 @@ def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model,
     # Return the classifier
     return clf
 #==============================================================================
+# TensorFlow doesn't work for python 3.7
+'''
+#==============================================================================
 # Train ANN
 def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, num_epochs, activation_func, neurons, b_size, num_classes, num_solutions, num_generations, num_parents_mating):
     # Batch size must be smaller than number of samples
@@ -321,6 +328,11 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
     # Return the classifier
     return model
 #==============================================================================
+'''
+#==============================================================================
+# XGBoost doesn't work for python 32-bit
+'''
+#==============================================================================
 # XGBoost classifier
 def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_classes):
     # Scikit doesn't accept vector classes, it expects integers
@@ -364,3 +376,4 @@ def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_class
     # Return the tree
     return bst
 #==============================================================================
+'''

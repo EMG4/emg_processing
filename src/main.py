@@ -10,13 +10,17 @@ import sys
 import argparse
 import os
 import numpy as np
-import tensorflow as tf
+# TensorFlow doesn't work for python 3.7
+#import tensorflow as tf
 #from tensorflow import keras
+#from classifier.classifier import ann
+# XGBoost doesn't work for python 32-bit
+#from classifier.classifier import xgboost_classifier
 from filtering.filter import rm_offset, bandpass, notch
 from segmentation.segmentation import data_segmentation, label_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func, ofnda_func
-from classifier.classifier import lda, support_vector_machine, knn, mlp, ann, xgboost_classifier
+from classifier.classifier import lda, support_vector_machine, knn, mlp
 import pickle
 
 
@@ -125,6 +129,8 @@ def main(argv):
 
     # Chooses classifier
     # ANN with GA optimization
+    # TensorFlow doesn't work for python 3.7
+    '''
     if(args.rann):
         # Need input dim for the ANN input layer
         input_dim = segment_arr.shape[1]
@@ -139,8 +145,9 @@ def main(argv):
         tf.saved_model.save(model, dir_path)
 
         print('Saved TF ANN model to:', dir_path)
+    '''
     # KNN
-    elif(args.rknn):
+    if(args.rknn):
         classifier = knn(segment_arr, label_arr, args.k, args.nn, args.wf, args.nl)
 
         # Save classifier to a binary file
@@ -175,6 +182,10 @@ def main(argv):
         file = open(classifier_file, 'wb')
         pickle.dump(classifier, file)
         print('Saved SVM classifier to:', classifier_file)
+    else:
+        print("No classifier is chosen")
+    # XGBoost doesn't work for python 32-bit
+    '''
     # XGBoost
     elif(args.rxgb):
         classifier = xgboost_classifier(segment_arr, label_arr, args.tsp, args.k, args.nc)
@@ -184,8 +195,7 @@ def main(argv):
         file = open(classifier_file, 'wb')
         pickle.dump(classifier, file)
         print('Saved XGB classifier to:', classifier_file)
-    else:
-        print("No classifier is chosen")
+    '''
 #==============================================================================
 if __name__ == "__main__":
     main(sys.argv[1:])
