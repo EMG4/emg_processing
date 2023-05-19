@@ -51,7 +51,7 @@ def load_data():
     while sample_counter < number_samples_to_load:
         read_voltage_from_adc = ser.readline()
         read_voltage_from_adc = read_voltage_from_adc.decode('utf-8').rstrip('\n').rstrip('\r')
-        print(read_voltage_from_adc)
+        #print(read_voltage_from_adc)
         buf.append(int(read_voltage_from_adc))
         sample_counter += 1
     return buf
@@ -74,7 +74,7 @@ def load_model(file_name):
 #==============================================================================
 # Main function
 def main():
-    file_name = "./trained_scikit_models/trained_lda_classifier.txt"
+    file_name = "./trained_scikit_models/trained_knn_classifier.txt"
     sampling_frequency = 1400
     window_size = 0.25
     overlap = 0.125
