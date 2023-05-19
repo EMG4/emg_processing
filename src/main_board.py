@@ -23,7 +23,7 @@ import pickle
 ser = serial.Serial("/dev/ttyACM1")
 class ReadLine:
     def __init__(self, s):
-        serlf.buf = bytearray()
+        self.buf = bytearray()
         self.s = s
     def readline(self):
         i = self.buf.find(b"\n")
@@ -44,7 +44,7 @@ class ReadLine:
 #==============================================================================
 # Function for reading data
 def load_data():
-    #r1.ReadLine(ser)
+    read_voltage_from_adc = ReadLine(ser)
     sample_counter = 0
     buf = []
     number_samples_to_load = 375
@@ -52,7 +52,7 @@ def load_data():
         read_voltage_from_adc = ser.readline()
         read_voltage_from_adc = read_voltage_from_adc.decode('utf-8').rstrip('\n').rstrip('\r')
         print(read_voltage_from_adc)
-        buf.append(read_voltage_from_adc)
+        buf.append(int(read_voltage_from_adc))
         sample_counter += 1
     return buf
 #==============================================================================
@@ -74,7 +74,7 @@ def load_model(file_name):
 #==============================================================================
 # Main function
 def main():
-    file_name = "./trained_scikit_models/trained_knn_classifier.txt"
+    file_name = "./trained_scikit_models/trained_lda_classifier.txt"
     sampling_frequency = 1400
     window_size = 0.25
     overlap = 0.125
@@ -87,7 +87,7 @@ def main():
     while(True):
         # Load data
         data = load_data()
-        data = np.array(data)[:, 0]
+        data = np.array(data)
 
         # Perform segmentation
         segment_arr = data_segmentation(data, sampling_frequency, window_size, overlap, number_classes)
