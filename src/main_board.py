@@ -19,6 +19,7 @@ import pickle
 
 #==============================================================================
 # Function and class for reading data
+# Class for reading data
 ser = serial.Serial("/dev/ttyACM1")
 class ReadLine:
     def __init__(self, s):
@@ -40,6 +41,8 @@ class ReadLine:
                 return r
             else:
                 self.buf.extend(data)
+#==============================================================================
+# Function for reading data
 def load_data():
     #r1.ReadLine(ser)
     sample_counter = 0
@@ -58,9 +61,11 @@ def load_model(file_name):
     tf_model = 0
     if(tf_model):
         # Load data (TensorFlow)
+        '''
         dir_path = os.path.join(os.getcwd(), "trained_models")
         model = tf.saved_model.load(dir_path)
         return model
+        '''
     else:
         # Load data (scikit learn)
         file = open(file_name, 'rb')
@@ -82,9 +87,10 @@ def main():
     while(True):
         # Load data
         data = load_data()
+        data = np.array(data)[:, 0]
 
         # Perform segmentation
-        segment_arr, label_arr = data_segmentation(data, sampling_frequency, window_size, overlap, number_classes)
+        segment_arr = data_segmentation(data, sampling_frequency, window_size, overlap, number_classes)
 
         # Performs feature extraction
         segment_arr = fe(segment_arr, sampling_frequency)
