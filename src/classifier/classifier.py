@@ -20,14 +20,12 @@ from imblearn.over_sampling import RandomOverSampler
 from sklearn2pmml.pipeline import PMMLPipeline
 from sklearn2pmml import sklearn2pmml
 # XGBoost doesn't work for python 32-bit
-#from xgboost import XGBClassifier
+from xgboost import XGBClassifier
 # TensorFlow doesn't work for python 3.7
-'''
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.data import Dataset
 from optimizer.optimizer import ga
-'''
 
 import config
 
