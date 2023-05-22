@@ -11,11 +11,11 @@ import argparse
 import os
 import numpy as np
 # TensorFlow doesn't work for python 3.7
-#import tensorflow as tf
-#from tensorflow import keras
-#from classifier.classifier import ann
+import tensorflow as tf
+from tensorflow import keras
+from classifier.classifier import ann
 # XGBoost doesn't work for python 32-bit
-#from classifier.classifier import xgboost_classifier
+from classifier.classifier import xgboost_classifier
 from filtering.filter import rm_offset, bandpass, notch
 from segmentation.segmentation import data_segmentation, label_segmentation
 from feature.feature import fe
@@ -39,8 +39,8 @@ def main(argv):
     # Options
     parser.add_argument('-f', required = True, type = str, help = "Choose input file")
     parser.add_argument('--ro', default=False, type = bool, help = "Run remove dc offset")
-    parser.add_argument('--rb', default=False, type = bool, help = "Run apply bandpass filter")
-    parser.add_argument('--rn', default=False, type = bool, help = "Run apply notch filter")
+    parser.add_argument('--rb', default=True, type = bool, help = "Run apply bandpass filter")
+    parser.add_argument('--rn', default=True, type = bool, help = "Run apply notch filter")
     parser.add_argument('--rpca', default=True, type = bool, help = "Run apply PCA")
     parser.add_argument('--rofnda', default=False, type = bool, help = "Run apply OFNDA")
     parser.add_argument('--rlda', default=False, type = bool, help = "Run LDA")
@@ -55,7 +55,7 @@ def main(argv):
     parser.add_argument('--ol', default=0.125, type = float, help = "Set window overlap (s)")
     parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
     # Dimension Reduction parameters 
-    parser.add_argument('--pcanc', default=5, type = int, help = "Set number of PCA components")
+    parser.add_argument('--pcanc', default=1, type = int, help = "Set number of PCA components (5 has best performance, 1 is needed for real time 250ms)")
     # Multiple classifier parameters
     parser.add_argument('--tsp', default=0.8, type = float, help = "Set training set proportions (between 0 and 1)")
     parser.add_argument('-k', default=5, type = int, help = "Set k for k fold cross validation")
@@ -130,7 +130,6 @@ def main(argv):
     # Chooses classifier
     # ANN with GA optimization
     # TensorFlow doesn't work for python 3.7
-    '''
     if(args.rann):
         # Need input dim for the ANN input layer
         input_dim = segment_arr.shape[1]
@@ -145,57 +144,24 @@ def main(argv):
         tf.saved_model.save(model, dir_path)
 
         print('Saved TF ANN model to:', dir_path)
-    '''
     # KNN
-    if(args.rknn):
-        classifier = knn(segment_arr, label_arr, args.k, args.nn, args.wf, args.nl)
-
-        # Save classifier to a binary file
-        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_knn_classifier.txt")
-        file = open(classifier_file, 'wb')
-        pickle.dump(classifier, file)
-        print('Saved KNN classifier to:', classifier_file)
+    elif(args.rknn):
+        knn(segment_arr, label_arr, args.k, args.nn, args.wf, args.nl)
     # LDA
     elif(args.rlda):
-        classifier = lda(segment_arr, label_arr, args.ldanc, args.k, args.ls)
-
-        # Save classifier to a binary file
-        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_lda_classifier.txt")
-        file = open(classifier_file, 'wb')
-        pickle.dump(classifier, file)
-        print('Saved LDA classifier to:', classifier_file)
+        lda(segment_arr, label_arr, args.ldanc, args.k, args.ls)
     # MLP
     elif(args.rmlp):
-        classifier = mlp(segment_arr, label_arr, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k, args.tsp)
-
-        # Save classifier to a binary file
-        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_mlp_classifier.txt")
-        file = open(classifier_file, 'wb')
-        pickle.dump(classifier, file)
-        print('Saved MLP classifier to:', classifier_file)
+        mlp(segment_arr, label_arr, args.l, args.af, args.sf, args.lrm, args.a, args.i, args.k, args.tsp)
     # SVM
     elif(args.rsvm):
-        classifier = support_vector_machine(segment_arr, label_arr, args.k, args.ker, args.g, args.dfs)
-
-        # Save classifier to a binary file
-        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_svm_classifier.txt")
-        file = open(classifier_file, 'wb')
-        pickle.dump(classifier, file)
-        print('Saved SVM classifier to:', classifier_file)
+        support_vector_machine(segment_arr, label_arr, args.k, args.ker, args.g, args.dfs)
+    # XGBoost
+    # XGBoost doesn't work for python 32-bit
+    elif(args.rxgb):
+        xgboost_classifier(segment_arr, label_arr, args.tsp, args.k, args.nc)
     else:
         print("No classifier is chosen")
-    # XGBoost doesn't work for python 32-bit
-    '''
-    # XGBoost
-    elif(args.rxgb):
-        classifier = xgboost_classifier(segment_arr, label_arr, args.tsp, args.k, args.nc)
-
-        # Save classifier to a binary file
-        classifier_file = os.path.join(os.getcwd(), "trained_scikit_models", "trained_xgb_classifier.txt")
-        file = open(classifier_file, 'wb')
-        pickle.dump(classifier, file)
-        print('Saved XGB classifier to:', classifier_file)
-    '''
 #==============================================================================
 if __name__ == "__main__":
     main(sys.argv[1:])

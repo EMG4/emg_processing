@@ -10,11 +10,13 @@ import numpy as np
 #import tensorflow as tf
 import os
 import serial
+from filtering.filter import bandpass, notch
 from segmentation.segmentation import data_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func
 from sklearn.neighbors import KNeighborsClassifier
 import pickle
+from pypmml import Model
 
 
 #==============================================================================
@@ -68,13 +70,12 @@ def load_model(file_name):
         '''
     else:
         # Load data (scikit learn)
-        file = open(file_name, 'rb')
-        classifier = pickle.load(file)
-        return classifier
+        clf = Model.load(file_name)
+        return clf
 #==============================================================================
 # Main function
 def main():
-    file_name = "./trained_scikit_models/trained_knn_classifier.txt"
+    file_name = "./trained_scikit_models/knn.pmml"
     sampling_frequency = 1400
     window_size = 0.25
     overlap = 0.125
@@ -89,6 +90,10 @@ def main():
         data = load_data()
         data = np.array(data)
 
+        # Perform filtering
+        data = bandpass(data, sampling_frequency)
+        data = notch(data, sampling_frequency)
+
         # Perform segmentation
         segment_arr = data_segmentation(data, sampling_frequency, window_size, overlap, number_classes)
 
@@ -98,6 +103,7 @@ def main():
         # Perform PCA
         segment_arr = pca_func(segment_arr, number_principal_components)
 
+        # The model predicts which class the data belongs to
         prediction = model.predict(segment_arr)
 
         print(prediction)

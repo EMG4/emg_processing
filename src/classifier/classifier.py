@@ -17,6 +17,8 @@ from sklearn.model_selection import KFold
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 from imblearn.over_sampling import RandomOverSampler
+from sklearn2pmml.pipeline import PMMLPipeline
+from sklearn2pmml import sklearn2pmml
 # XGBoost doesn't work for python 32-bit
 #from xgboost import XGBClassifier
 # TensorFlow doesn't work for python 3.7
@@ -89,7 +91,7 @@ def lda(data, labels, num_components, num_splits, lda_solver):
         data_train, label_train = class_imb(data_train, label_train)
 
         # Create LDA model
-        clf = LinearDiscriminantAnalysis(n_components=num_components, solver=lda_solver)
+        clf = PMMLPipeline([("classifier", LinearDiscriminantAnalysis(n_components=num_components, solver=lda_solver))])
 
         # Train model
         clf.fit(data_train, label_train)
@@ -109,8 +111,9 @@ def lda(data, labels, num_components, num_splits, lda_solver):
     print(accuracy)
     print(confusion_matrix(labels, predictions))
 
-    # Return the classifier
-    return clf
+    # Save classifier to pmml file
+    sklearn2pmml(clf, "./trained_scikit_models/lda.pmml", with_repr = True)
+    print('Saved LDA classifier to:', "./trained_scikit_models/lda.pmml")
 #==============================================================================
 # Train SVM
 def support_vector_machine(data, labels, num_splits, kernel, gamma, decision_function_shape):
@@ -129,7 +132,7 @@ def support_vector_machine(data, labels, num_splits, kernel, gamma, decision_fun
         data_train, label_train = class_imb(data_train, label_train)
 
         # Create SVM classifier
-        clf = make_pipeline(StandardScaler(), SVC(kernel=kernel, gamma=gamma, decision_function_shape=decision_function_shape))
+        clf = PMMLPipeline([("classifier", make_pipeline(StandardScaler(), SVC(kernel=kernel, gamma=gamma, decision_function_shape=decision_function_shape)))])
 
         # Train model
         clf.fit(data_train, label_train)
@@ -149,8 +152,9 @@ def support_vector_machine(data, labels, num_splits, kernel, gamma, decision_fun
     print(accuracy)
     print(confusion_matrix(labels, predictions))
 
-    # Return the classifier
-    return clf
+    # Save classifier to pmml file
+    sklearn2pmml(clf, "./trained_scikit_models/svm.pmml", with_repr = True)
+    print('Saved SVM classifier to:', "./trained_scikit_models/svm.pmml")
 #==============================================================================
 # Train KNN
 def knn(data, labels, num_splits, num_neighbors, weight_function, leaf_size):
@@ -169,7 +173,7 @@ def knn(data, labels, num_splits, num_neighbors, weight_function, leaf_size):
         data_train, label_train = class_imb(data_train, label_train)
 
         # Create KNN classifier
-        clf = KNeighborsClassifier(n_neighbors = num_neighbors, weights=weight_function, leaf_size=leaf_size)
+        clf = PMMLPipeline([("classifier", KNeighborsClassifier(n_neighbors = num_neighbors, weights=weight_function, leaf_size=leaf_size))])
 
         # Train model
         clf.fit(data_train, label_train)
@@ -189,8 +193,9 @@ def knn(data, labels, num_splits, num_neighbors, weight_function, leaf_size):
     print(accuracy)
     print(confusion_matrix(labels, predictions))
 
-    # Return the classifier
-    return clf
+    # Save classifier to pmml file
+    sklearn2pmml(clf, "./trained_scikit_models/knn.pmml", with_repr = True)
+    print('Saved KNN classifier to:', "./trained_scikit_models/knn.pmml")
 #==============================================================================
 # Train MLP
 def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model, alpha, iterations, num_splits, train_set_proportion):
@@ -209,7 +214,7 @@ def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model,
         data_train, label_train = class_imb(data_train, label_train)
 
         # Create MLP model
-        clf = MLPClassifier(hidden_layer_sizes=(layers,), activation=activation_func, solver=solver_func, learning_rate=learning_rate_model, learning_rate_init = alpha, max_iter=iterations, early_stopping=False, validation_fraction=1-train_set_proportion)
+        clf = PMMLPipeline([("classifier", MLPClassifier(hidden_layer_sizes=(layers,), activation=activation_func, solver=solver_func, learning_rate=learning_rate_model, learning_rate_init = alpha, max_iter=iterations, early_stopping=False, validation_fraction=1-train_set_proportion))])
 
         # Train model
         clf.fit(data_train, label_train)
@@ -229,11 +234,58 @@ def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model,
     print(accuracy)
     print(confusion_matrix(labels, predictions))
 
-    # Return the classifier
-    return clf
+    # Save classifier to pmml file
+    sklearn2pmml(clf, "./trained_scikit_models/mlp.pmml", with_repr = True)
+    print('Saved MLP classifier to:', "./trained_scikit_models/mlp.pmml")
+#==============================================================================
+# XGBoost doesn't work for python 32-bit
+#==============================================================================
+# XGBoost classifier
+def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_classes):
+    # Scikit doesn't accept vector classes, it expects integers
+    labels = class_vector_to_integer(labels)
+
+    total_accuracy = 0
+    # Performs k fold cross validation
+    kfold = KFold(n_splits=num_splits, shuffle=True)
+    for train, test in kfold.split(data):
+
+        data_train, data_test = data[train], data[test]
+        label_train, label_test = labels[train], labels[test]
+
+        # Fix class imbalance in training data
+        data_train, label_train = class_imb(data_train, label_train)
+
+        # Create multi class XGBoost classifier
+        clf = PMMLPipeline([("classifier", XGBClassifier(objective='multi:softmax', num_class = num_classes, verbosity = 0))])
+
+        # Train model
+        clf.fit(data_train, label_train)
+
+        # Evalute the model
+        predictions = bst.predict(data_test)
+        accuracy = accuracy_score(label_test, predictions)
+        #accuracy = bst.score(data_test, label_test)
+        print(accuracy)
+        total_accuracy = total_accuracy + accuracy
+
+
+    # Calculate and print mean accuracy
+    total_accuracy = total_accuracy/num_splits
+    print('Total Accuracy: %.2f' % (total_accuracy*100))
+
+    # Print confusion matrix
+    predictions = bst.predict(data)
+    accuracy = accuracy_score(labels, predictions)
+    print(accuracy)
+    print(confusion_matrix(labels, predictions))
+
+    # Save classifier to pmml file
+    sklearn2pmml(clf, "./trained_scikit_models/xgb.pmml", with_repr = True)
+    print('Saved XGBoost classifier to:', "./trained_scikit_models/xgb.pmml")
+#==============================================================================
 #==============================================================================
 # TensorFlow doesn't work for python 3.7
-'''
 #==============================================================================
 # Train ANN
 def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, num_epochs, activation_func, neurons, b_size, num_classes, num_solutions, num_generations, num_parents_mating):
@@ -328,52 +380,3 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
     # Return the classifier
     return model
 #==============================================================================
-'''
-#==============================================================================
-# XGBoost doesn't work for python 32-bit
-'''
-#==============================================================================
-# XGBoost classifier
-def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_classes):
-    # Scikit doesn't accept vector classes, it expects integers
-    labels = class_vector_to_integer(labels)
-
-    total_accuracy = 0
-    # Performs k fold cross validation
-    kfold = KFold(n_splits=num_splits, shuffle=True)
-    for train, test in kfold.split(data):
-
-        data_train, data_test = data[train], data[test]
-        label_train, label_test = labels[train], labels[test]
-
-        # Fix class imbalance in training data
-        data_train, label_train = class_imb(data_train, label_train)
-
-        # Create multi class XGBoost classifier
-        bst = XGBClassifier(objective='multi:softmax', num_class = num_classes, verbosity = 0)
-
-        # Train model
-        bst.fit(data_train, label_train)
-
-        # Evalute the model
-        predictions = bst.predict(data_test)
-        accuracy = accuracy_score(label_test, predictions)
-        #accuracy = bst.score(data_test, label_test)
-        print(accuracy)
-        total_accuracy = total_accuracy + accuracy
-
-
-    # Calculate and print mean accuracy
-    total_accuracy = total_accuracy/num_splits
-    print('Total Accuracy: %.2f' % (total_accuracy*100))
-
-    # Print confusion matrix
-    predictions = bst.predict(data)
-    accuracy = accuracy_score(labels, predictions)
-    print(accuracy)
-    print(confusion_matrix(labels, predictions))
-
-    # Return the tree
-    return bst
-#==============================================================================
-'''

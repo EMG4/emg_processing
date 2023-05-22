@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_4" xmlns:data="http://jpmml.org/jpmml-model/InlineTable" version="4.4">
+	<Header>
+		<Application name="SkLearn2PMML package" version="0.92.2"/>
+		<Timestamp>2023-05-22T09:53:31Z</Timestamp>
+	</Header>
+	<MiningBuildTask>
+		<Extension name="repr">PMMLPipeline(steps=[('classifier', LinearDiscriminantAnalysis(solver='eigen'))])</Extension>
+	</MiningBuildTask>
+	<DataDictionary>
+		<DataField name="y" optype="categorical" dataType="integer">
+			<Value value="0"/>
+			<Value value="1"/>
+			<Value value="2"/>
+			<Value value="3"/>
+			<Value value="4"/>
+			<Value value="5"/>
+			<Value value="6"/>
+			<Value value="7"/>
+			<Value value="8"/>
+			<Value value="9"/>
+			<Value value="10"/>
+		</DataField>
+		<DataField name="x1" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<MiningModel functionName="classification" algorithmName="sklearn.discriminant_analysis.LinearDiscriminantAnalysis">
+		<MiningSchema>
+			<MiningField name="y" usageType="target"/>
+			<MiningField name="x1"/>
+		</MiningSchema>
+		<Segmentation multipleModelMethod="modelChain" missingPredictionTreatment="returnMissing">
+			<Segment id="1">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x1"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(0)" optype="continuous" dataType="double" isFinalResult="false"/>
+					</Output>
+					<RegressionTable intercept="-2.398145085928866">
+						<NumericPredictor name="x1" coefficient="0.0029182778414340613"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="2">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x1"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(1)" optype="continuous" dataType="double" isFinalResult="false"/>
+					</Output>
+					<RegressionTable intercept="-2.397907113624165">
+						<NumericPredictor name="x1" coefficient="-6.353455647708228E-4"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="3">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x1"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(2)" optype="continuous" dataType="double" isFinalResult="false"/>
+					</Output>
+					<RegressionTable intercept="-2.397900355792152">
+						<NumericPredictor name="x1" coefficient="-4.1627353003991635E-4"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="4">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x1"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(3)" optype="continuous" dataType="double" isFinalResult="false"/>
+					</Output>
+					<RegressionTable intercept="-2.3981684194982438">
+						<NumericPredictor name="x1" coefficient="0.003051525374246932"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="5">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x1"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(4)" optype="continuous" dataType="double" isFinalResult="false"/>
+					</Output>
+					<RegressionTable intercept="-2.4015824672414596">
+						<NumericPredictor name="x1" coefficient="0.011211585339110177"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="6">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x1"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(5)" optype="continuous" dataType="double" isFinalResult="false"/>
+					</Output>
+					<RegressionTable intercept="-2.397895433934061">
+						<NumericPredictor name="x1" coefficient="-7.411649586404287E-5"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="7">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x1"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(6)" optype="continuous" dataType="double" isFinalResult="false"/>
+					</Output>
+					<RegressionTable intercept="-2.3979800589183093">
+						<NumericPredictor name="x1" coefficient="0.0017001270890008896"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="8">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x1"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(7)" optype="continuous" dataType="double" isFinalResult="false"/>
+					</Output>
+					<RegressionTable intercept="-2.3988649615388815">
+						<NumericPredictor name="x1" coefficient="-0.005749567581443101"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="9">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x1"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(8)" optype="continuous" dataType="double" isFinalResult="false"/>
+					</Output>
+					<RegressionTable intercept="-2.400683913703974">
+						<NumericPredictor name="x1" coefficient="0.009750239945958356"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="10">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x1"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(9)" optype="continuous" dataType="double" isFinalResult="false"/>
+					</Output>
+					<RegressionTable intercept="-2.404756025029222">
+						<NumericPredictor name="x1" coefficient="-0.015293429113808184"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="11">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x1"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(10)" optype="continuous" dataType="double" isFinalResult="false"/>
+					</Output>
+					<RegressionTable intercept="-2.400560477898854">
+						<NumericPredictor name="x1" coefficient="0.009532006384174656"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="12">
+				<True/>
+				<RegressionModel functionName="classification" normalizationMethod="softmax">
+					<MiningSchema>
+						<MiningField name="y" usageType="target"/>
+						<MiningField name="decisionFunction(0)"/>
+						<MiningField name="decisionFunction(1)"/>
+						<MiningField name="decisionFunction(2)"/>
+						<MiningField name="decisionFunction(3)"/>
+						<MiningField name="decisionFunction(4)"/>
+						<MiningField name="decisionFunction(5)"/>
+						<MiningField name="decisionFunction(6)"/>
+						<MiningField name="decisionFunction(7)"/>
+						<MiningField name="decisionFunction(8)"/>
+						<MiningField name="decisionFunction(9)"/>
+						<MiningField name="decisionFunction(10)"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="probability(0)" optype="continuous" dataType="double" feature="probability" value="0"/>
+						<OutputField name="probability(1)" optype="continuous" dataType="double" feature="probability" value="1"/>
+						<OutputField name="probability(2)" optype="continuous" dataType="double" feature="probability" value="2"/>
+						<OutputField name="probability(3)" optype="continuous" dataType="double" feature="probability" value="3"/>
+						<OutputField name="probability(4)" optype="continuous" dataType="double" feature="probability" value="4"/>
+						<OutputField name="probability(5)" optype="continuous" dataType="double" feature="probability" value="5"/>
+						<OutputField name="probability(6)" optype="continuous" dataType="double" feature="probability" value="6"/>
+						<OutputField name="probability(7)" optype="continuous" dataType="double" feature="probability" value="7"/>
+						<OutputField name="probability(8)" optype="continuous" dataType="double" feature="probability" value="8"/>
+						<OutputField name="probability(9)" optype="continuous" dataType="double" feature="probability" value="9"/>
+						<OutputField name="probability(10)" optype="continuous" dataType="double" feature="probability" value="10"/>
+					</Output>
+					<RegressionTable intercept="0.0" targetCategory="0">
+						<NumericPredictor name="decisionFunction(0)" coefficient="1.0"/>
+					</RegressionTable>
+					<RegressionTable intercept="0.0" targetCategory="1">
+						<NumericPredictor name="decisionFunction(1)" coefficient="1.0"/>
+					</RegressionTable>
+					<RegressionTable intercept="0.0" targetCategory="2">
+						<NumericPredictor name="decisionFunction(2)" coefficient="1.0"/>
+					</RegressionTable>
+					<RegressionTable intercept="0.0" targetCategory="3">
+						<NumericPredictor name="decisionFunction(3)" coefficient="1.0"/>
+					</RegressionTable>
+					<RegressionTable intercept="0.0" targetCategory="4">
+						<NumericPredictor name="decisionFunction(4)" coefficient="1.0"/>
+					</RegressionTable>
+					<RegressionTable intercept="0.0" targetCategory="5">
+						<NumericPredictor name="decisionFunction(5)" coefficient="1.0"/>
+					</RegressionTable>
+					<RegressionTable intercept="0.0" targetCategory="6">
+						<NumericPredictor name="decisionFunction(6)" coefficient="1.0"/>
+					</RegressionTable>
+					<RegressionTable intercept="0.0" targetCategory="7">
+						<NumericPredictor name="decisionFunction(7)" coefficient="1.0"/>
+					</RegressionTable>
+					<RegressionTable intercept="0.0" targetCategory="8">
+						<NumericPredictor name="decisionFunction(8)" coefficient="1.0"/>
+					</RegressionTable>
+					<RegressionTable intercept="0.0" targetCategory="9">
+						<NumericPredictor name="decisionFunction(9)" coefficient="1.0"/>
+					</RegressionTable>
+					<RegressionTable intercept="0.0" targetCategory="10">
+						<NumericPredictor name="decisionFunction(10)" coefficient="1.0"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+		</Segmentation>
+	</MiningModel>
+</PMML>
