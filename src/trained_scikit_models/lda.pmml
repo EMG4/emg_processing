@@ -2,13 +2,13 @@
 <PMML xmlns="http://www.dmg.org/PMML-4_4" xmlns:data="http://jpmml.org/jpmml-model/InlineTable" version="4.4">
 	<Header>
 		<Application name="SkLearn2PMML package" version="0.92.2"/>
-		<Timestamp>2023-05-22T09:53:31Z</Timestamp>
+		<Timestamp>2023-05-23T08:16:22Z</Timestamp>
 	</Header>
 	<MiningBuildTask>
 		<Extension name="repr">PMMLPipeline(steps=[('classifier', LinearDiscriminantAnalysis(solver='eigen'))])</Extension>
 	</MiningBuildTask>
 	<DataDictionary>
-		<DataField name="y" optype="categorical" dataType="integer">
+		<DataField name="Integer labels" optype="categorical" dataType="integer">
 			<Value value="0"/>
 			<Value value="1"/>
 			<Value value="2"/>
@@ -21,25 +21,29 @@
 			<Value value="9"/>
 			<Value value="10"/>
 		</DataField>
-		<DataField name="x1" optype="continuous" dataType="double"/>
+		<DataField name="PCA0" optype="continuous" dataType="double"/>
+		<DataField name="PCA1" optype="continuous" dataType="double"/>
 	</DataDictionary>
 	<MiningModel functionName="classification" algorithmName="sklearn.discriminant_analysis.LinearDiscriminantAnalysis">
 		<MiningSchema>
-			<MiningField name="y" usageType="target"/>
-			<MiningField name="x1"/>
+			<MiningField name="Integer labels" usageType="target"/>
+			<MiningField name="PCA0"/>
+			<MiningField name="PCA1"/>
 		</MiningSchema>
 		<Segmentation multipleModelMethod="modelChain" missingPredictionTreatment="returnMissing">
 			<Segment id="1">
 				<True/>
 				<RegressionModel functionName="regression">
 					<MiningSchema>
-						<MiningField name="x1"/>
+						<MiningField name="PCA0"/>
+						<MiningField name="PCA1"/>
 					</MiningSchema>
 					<Output>
 						<OutputField name="decisionFunction(0)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.398145085928866">
-						<NumericPredictor name="x1" coefficient="0.0029182778414340613"/>
+					<RegressionTable intercept="-2.3993867772287096">
+						<NumericPredictor name="PCA0" coefficient="0.006708512771108568"/>
+						<NumericPredictor name="PCA1" coefficient="-0.00609442200971277"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -47,13 +51,15 @@
 				<True/>
 				<RegressionModel functionName="regression">
 					<MiningSchema>
-						<MiningField name="x1"/>
+						<MiningField name="PCA0"/>
+						<MiningField name="PCA1"/>
 					</MiningSchema>
 					<Output>
 						<OutputField name="decisionFunction(1)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.397907113624165">
-						<NumericPredictor name="x1" coefficient="-6.353455647708228E-4"/>
+					<RegressionTable intercept="-2.400321606400117">
+						<NumericPredictor name="PCA0" coefficient="0.007771143270448058"/>
+						<NumericPredictor name="PCA1" coefficient="0.011837496239528547"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -61,13 +67,15 @@
 				<True/>
 				<RegressionModel functionName="regression">
 					<MiningSchema>
-						<MiningField name="x1"/>
+						<MiningField name="PCA0"/>
+						<MiningField name="PCA1"/>
 					</MiningSchema>
 					<Output>
 						<OutputField name="decisionFunction(2)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.397900355792152">
-						<NumericPredictor name="x1" coefficient="-4.1627353003991635E-4"/>
+					<RegressionTable intercept="-2.398567298432442">
+						<NumericPredictor name="PCA0" coefficient="0.004325608977407189"/>
+						<NumericPredictor name="PCA1" coefficient="-0.005289219689692955"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -75,13 +83,15 @@
 				<True/>
 				<RegressionModel functionName="regression">
 					<MiningSchema>
-						<MiningField name="x1"/>
+						<MiningField name="PCA0"/>
+						<MiningField name="PCA1"/>
 					</MiningSchema>
 					<Output>
 						<OutputField name="decisionFunction(3)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.3981684194982438">
-						<NumericPredictor name="x1" coefficient="0.003051525374246932"/>
+					<RegressionTable intercept="-2.3982020794576195">
+						<NumericPredictor name="PCA0" coefficient="-0.0029358292074352097"/>
+						<NumericPredictor name="PCA1" coefficient="0.0034961762610071193"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -89,13 +99,15 @@
 				<True/>
 				<RegressionModel functionName="regression">
 					<MiningSchema>
-						<MiningField name="x1"/>
+						<MiningField name="PCA0"/>
+						<MiningField name="PCA1"/>
 					</MiningSchema>
 					<Output>
 						<OutputField name="decisionFunction(4)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.4015824672414596">
-						<NumericPredictor name="x1" coefficient="0.011211585339110177"/>
+					<RegressionTable intercept="-2.4002098288714775">
+						<NumericPredictor name="PCA0" coefficient="0.0023700421169478266"/>
+						<NumericPredictor name="PCA1" coefficient="-0.022501060335039434"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -103,13 +115,15 @@
 				<True/>
 				<RegressionModel functionName="regression">
 					<MiningSchema>
-						<MiningField name="x1"/>
+						<MiningField name="PCA0"/>
+						<MiningField name="PCA1"/>
 					</MiningSchema>
 					<Output>
 						<OutputField name="decisionFunction(5)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.397895433934061">
-						<NumericPredictor name="x1" coefficient="-7.411649586404287E-5"/>
+					<RegressionTable intercept="-2.4000094212474323">
+						<NumericPredictor name="PCA0" coefficient="-0.005645120220753856"/>
+						<NumericPredictor name="PCA1" coefficient="-0.016325749340203994"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -117,13 +131,15 @@
 				<True/>
 				<RegressionModel functionName="regression">
 					<MiningSchema>
-						<MiningField name="x1"/>
+						<MiningField name="PCA0"/>
+						<MiningField name="PCA1"/>
 					</MiningSchema>
 					<Output>
 						<OutputField name="decisionFunction(6)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.3979800589183093">
-						<NumericPredictor name="x1" coefficient="0.0017001270890008896"/>
+					<RegressionTable intercept="-2.4041670673395052">
+						<NumericPredictor name="PCA0" coefficient="0.009663882351187461"/>
+						<NumericPredictor name="PCA1" coefficient="0.028261684909243915"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -131,13 +147,15 @@
 				<True/>
 				<RegressionModel functionName="regression">
 					<MiningSchema>
-						<MiningField name="x1"/>
+						<MiningField name="PCA0"/>
+						<MiningField name="PCA1"/>
 					</MiningSchema>
 					<Output>
 						<OutputField name="decisionFunction(7)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.3988649615388815">
-						<NumericPredictor name="x1" coefficient="-0.005749567581443101"/>
+					<RegressionTable intercept="-2.411627528723541">
+						<NumericPredictor name="PCA0" coefficient="-0.02016070019473568"/>
+						<NumericPredictor name="PCA1" coefficient="0.019971907599824097"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -145,13 +163,15 @@
 				<True/>
 				<RegressionModel functionName="regression">
 					<MiningSchema>
-						<MiningField name="x1"/>
+						<MiningField name="PCA0"/>
+						<MiningField name="PCA1"/>
 					</MiningSchema>
 					<Output>
 						<OutputField name="decisionFunction(8)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.400683913703974">
-						<NumericPredictor name="x1" coefficient="0.009750239945958356"/>
+					<RegressionTable intercept="-2.398531525406082">
+						<NumericPredictor name="PCA0" coefficient="-7.573631012359456E-4"/>
+						<NumericPredictor name="PCA1" coefficient="-0.012019531306746154"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -159,13 +179,15 @@
 				<True/>
 				<RegressionModel functionName="regression">
 					<MiningSchema>
-						<MiningField name="x1"/>
+						<MiningField name="PCA0"/>
+						<MiningField name="PCA1"/>
 					</MiningSchema>
 					<Output>
 						<OutputField name="decisionFunction(9)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.404756025029222">
-						<NumericPredictor name="x1" coefficient="-0.015293429113808184"/>
+					<RegressionTable intercept="-2.4066887595745765">
+						<NumericPredictor name="PCA0" coefficient="-0.016092464288398077"/>
+						<NumericPredictor name="PCA1" coefficient="-0.01525895483326331"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -173,13 +195,15 @@
 				<True/>
 				<RegressionModel functionName="regression">
 					<MiningSchema>
-						<MiningField name="x1"/>
+						<MiningField name="PCA0"/>
+						<MiningField name="PCA1"/>
 					</MiningSchema>
 					<Output>
 						<OutputField name="decisionFunction(10)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.400560477898854">
-						<NumericPredictor name="x1" coefficient="0.009532006384174656"/>
+					<RegressionTable intercept="-2.4081266424038605">
+						<NumericPredictor name="PCA0" coefficient="0.017002792475659896"/>
+						<NumericPredictor name="PCA1" coefficient="-0.019892434244003405"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -187,7 +211,7 @@
 				<True/>
 				<RegressionModel functionName="classification" normalizationMethod="softmax">
 					<MiningSchema>
-						<MiningField name="y" usageType="target"/>
+						<MiningField name="Integer labels" usageType="target"/>
 						<MiningField name="decisionFunction(0)"/>
 						<MiningField name="decisionFunction(1)"/>
 						<MiningField name="decisionFunction(2)"/>

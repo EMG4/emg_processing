@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_4" xmlns:data="http://jpmml.org/jpmml-model/InlineTable" version="4.4">
+	<Header>
+		<Application name="SkLearn2PMML package" version="0.92.2"/>
+		<Timestamp>2023-05-23T08:16:23Z</Timestamp>
+	</Header>
+	<MiningBuildTask>
+		<Extension name="repr">PMMLPipeline(steps=[('classifier', MLPClassifier(hidden_layer_sizes=(7,), learning_rate_init=0.01, max_iter=10000,
+              validation_fraction=0.19999999999999996))])</Extension>
+	</MiningBuildTask>
+	<DataDictionary>
+		<DataField name="Integer labels" optype="categorical" dataType="integer">
+			<Value value="0"/>
+			<Value value="1"/>
+			<Value value="2"/>
+			<Value value="3"/>
+			<Value value="4"/>
+			<Value value="5"/>
+			<Value value="6"/>
+			<Value value="7"/>
+			<Value value="8"/>
+			<Value value="9"/>
+			<Value value="10"/>
+		</DataField>
+		<DataField name="PCA0" optype="continuous" dataType="double"/>
+		<DataField name="PCA1" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<NeuralNetwork functionName="classification" algorithmName="sklearn.neural_network._multilayer_perceptron.MLPClassifier" activationFunction="rectifier">
+		<MiningSchema>
+			<MiningField name="Integer labels" usageType="target"/>
+			<MiningField name="PCA0"/>
+			<MiningField name="PCA1"/>
+		</MiningSchema>
+		<Output>
+			<OutputField name="probability(0)" optype="continuous" dataType="double" feature="probability" value="0"/>
+			<OutputField name="probability(1)" optype="continuous" dataType="double" feature="probability" value="1"/>
+			<OutputField name="probability(2)" optype="continuous" dataType="double" feature="probability" value="2"/>
+			<OutputField name="probability(3)" optype="continuous" dataType="double" feature="probability" value="3"/>
+			<OutputField name="probability(4)" optype="continuous" dataType="double" feature="probability" value="4"/>
+			<OutputField name="probability(5)" optype="continuous" dataType="double" feature="probability" value="5"/>
+			<OutputField name="probability(6)" optype="continuous" dataType="double" feature="probability" value="6"/>
+			<OutputField name="probability(7)" optype="continuous" dataType="double" feature="probability" value="7"/>
+			<OutputField name="probability(8)" optype="continuous" dataType="double" feature="probability" value="8"/>
+			<OutputField name="probability(9)" optype="continuous" dataType="double" feature="probability" value="9"/>
+			<OutputField name="probability(10)" optype="continuous" dataType="double" feature="probability" value="10"/>
+		</Output>
+		<NeuralInputs>
+			<NeuralInput id="input/1">
+				<DerivedField optype="continuous" dataType="double">
+					<FieldRef field="PCA0"/>
+				</DerivedField>
+			</NeuralInput>
+			<NeuralInput id="input/2">
+				<DerivedField optype="continuous" dataType="double">
+					<FieldRef field="PCA1"/>
+				</DerivedField>
+			</NeuralInput>
+		</NeuralInputs>
+		<NeuralLayer>
+			<Neuron id="1/1" bias="0.23472988646239293">
+				<Con from="input/1" weight="-0.10460439659530825"/>
+				<Con from="input/2" weight="0.007291756502667585"/>
+			</Neuron>
+			<Neuron id="1/2" bias="0.1782277006628286">
+				<Con from="input/1" weight="-0.02883532845430621"/>
+				<Con from="input/2" weight="-0.678133079756029"/>
+			</Neuron>
+			<Neuron id="1/3" bias="0.4536237617604788">
+				<Con from="input/1" weight="0.15498048345516588"/>
+				<Con from="input/2" weight="-0.03653777737327035"/>
+			</Neuron>
+			<Neuron id="1/4" bias="0.23796430725447823">
+				<Con from="input/1" weight="0.06518029211892414"/>
+				<Con from="input/2" weight="-0.35012739174458735"/>
+			</Neuron>
+			<Neuron id="1/5" bias="0.35120618017846106">
+				<Con from="input/1" weight="-0.09275017446473796"/>
+				<Con from="input/2" weight="-0.2543289330949478"/>
+			</Neuron>
+			<Neuron id="1/6" bias="-0.3745987025382793">
+				<Con from="input/1" weight="-0.1354088549860035"/>
+				<Con from="input/2" weight="-0.5712832151822654"/>
+			</Neuron>
+			<Neuron id="1/7" bias="-0.7190066764404562">
+				<Con from="input/1" weight="-0.265364989660695"/>
+				<Con from="input/2" weight="-0.004445020987864511"/>
+			</Neuron>
+		</NeuralLayer>
+		<NeuralLayer activationFunction="identity" normalizationMethod="softmax">
+			<Neuron id="2/1" bias="-0.04064866363763196">
+				<Con from="1/1" weight="0.026911327500612564"/>
+				<Con from="1/2" weight="0.06558522757926448"/>
+				<Con from="1/3" weight="0.0686654184278685"/>
+				<Con from="1/4" weight="0.05054635587570672"/>
+				<Con from="1/5" weight="0.17909426426073125"/>
+				<Con from="1/6" weight="0.24490168482140173"/>
+				<Con from="1/7" weight="0.16907729230756852"/>
+			</Neuron>
+			<Neuron id="2/2" bias="0.06115426108197085">
+				<Con from="1/1" weight="0.2038595735395655"/>
+				<Con from="1/2" weight="-0.36237553924302135"/>
+				<Con from="1/3" weight="0.20097445365025526"/>
+				<Con from="1/4" weight="-0.2063810070034252"/>
+				<Con from="1/5" weight="-0.01211351404968907"/>
+				<Con from="1/6" weight="0.26262468552502494"/>
+				<Con from="1/7" weight="0.10352836961842743"/>
+			</Neuron>
+			<Neuron id="2/3" bias="0.0759951383181238">
+				<Con from="1/1" weight="0.32010804850248953"/>
+				<Con from="1/2" weight="-0.12682300914578606"/>
+				<Con from="1/3" weight="-0.26791322408591484"/>
+				<Con from="1/4" weight="0.49982520319876994"/>
+				<Con from="1/5" weight="-0.3657974597295755"/>
+				<Con from="1/6" weight="0.4466511333670222"/>
+				<Con from="1/7" weight="-0.07864497735799153"/>
+			</Neuron>
+			<Neuron id="2/4" bias="0.07285165100181158">
+				<Con from="1/1" weight="-0.04965396818156201"/>
+				<Con from="1/2" weight="0.3306457016173473"/>
+				<Con from="1/3" weight="-0.13287274189495743"/>
+				<Con from="1/4" weight="0.056993027743491825"/>
+				<Con from="1/5" weight="0.15619165087166098"/>
+				<Con from="1/6" weight="-0.20498288232071438"/>
+				<Con from="1/7" weight="0.2920383773216804"/>
+			</Neuron>
+			<Neuron id="2/5" bias="-0.21864950387835114">
+				<Con from="1/1" weight="-0.21430893082648567"/>
+				<Con from="1/2" weight="0.3472519101520611"/>
+				<Con from="1/3" weight="0.1626400712328315"/>
+				<Con from="1/4" weight="-0.017615415569505938"/>
+				<Con from="1/5" weight="0.13694884656306694"/>
+				<Con from="1/6" weight="0.13553547123100365"/>
+				<Con from="1/7" weight="0.4378716117109186"/>
+			</Neuron>
+			<Neuron id="2/6" bias="0.08465416171732583">
+				<Con from="1/1" weight="0.10952585134187288"/>
+				<Con from="1/2" weight="-0.3609576110024678"/>
+				<Con from="1/3" weight="0.09439716390247871"/>
+				<Con from="1/4" weight="0.02305119408535264"/>
+				<Con from="1/5" weight="-0.039166400252116935"/>
+				<Con from="1/6" weight="0.5279857970227484"/>
+				<Con from="1/7" weight="0.14525249241339763"/>
+			</Neuron>
+			<Neuron id="2/7" bias="-0.15497837897981925">
+				<Con from="1/1" weight="-0.0194838194724383"/>
+				<Con from="1/2" weight="0.17804572072528688"/>
+				<Con from="1/3" weight="0.08100918985987479"/>
+				<Con from="1/4" weight="0.13175761137615583"/>
+				<Con from="1/5" weight="0.3239261993237891"/>
+				<Con from="1/6" weight="0.2807106952300818"/>
+				<Con from="1/7" weight="-0.09421530581930468"/>
+			</Neuron>
+			<Neuron id="2/8" bias="0.030515504999439405">
+				<Con from="1/1" weight="0.16224057100137676"/>
+				<Con from="1/2" weight="0.04917123150762225"/>
+				<Con from="1/3" weight="-0.2735789935155761"/>
+				<Con from="1/4" weight="0.34799742182766713"/>
+				<Con from="1/5" weight="-0.2572895780324145"/>
+				<Con from="1/6" weight="0.19420933340064114"/>
+				<Con from="1/7" weight="0.3824883505690354"/>
+			</Neuron>
+			<Neuron id="2/9" bias="0.40881356514616873">
+				<Con from="1/1" weight="0.35441075030068414"/>
+				<Con from="1/2" weight="-0.13444475889152518"/>
+				<Con from="1/3" weight="-0.2018530012864691"/>
+				<Con from="1/4" weight="0.13601200681313202"/>
+				<Con from="1/5" weight="-0.6208768973505797"/>
+				<Con from="1/6" weight="0.13673105615510098"/>
+				<Con from="1/7" weight="0.16179305292381496"/>
+			</Neuron>
+			<Neuron id="2/10" bias="0.04039382813359467">
+				<Con from="1/1" weight="0.23750744173231259"/>
+				<Con from="1/2" weight="-0.24379530159190796"/>
+				<Con from="1/3" weight="-0.3783868961702964"/>
+				<Con from="1/4" weight="0.5768379710241177"/>
+				<Con from="1/5" weight="0.31838095361015306"/>
+				<Con from="1/6" weight="0.1245491063922554"/>
+				<Con from="1/7" weight="-0.16569511188188038"/>
+			</Neuron>
+			<Neuron id="2/11" bias="-0.23954404036563953">
+				<Con from="1/1" weight="0.47362927210415606"/>
+				<Con from="1/2" weight="-0.2749005014130614"/>
+				<Con from="1/3" weight="-0.031181830226909533"/>
+				<Con from="1/4" weight="0.45947196783939986"/>
+				<Con from="1/5" weight="0.279510986012003"/>
+				<Con from="1/6" weight="-0.08274082666810144"/>
+				<Con from="1/7" weight="0.12404925780972986"/>
+			</Neuron>
+		</NeuralLayer>
+		<NeuralOutputs>
+			<NeuralOutput outputNeuron="2/1">
+				<DerivedField optype="categorical" dataType="integer">
+					<NormDiscrete field="Integer labels" value="0"/>
+				</DerivedField>
+			</NeuralOutput>
+			<NeuralOutput outputNeuron="2/2">
+				<DerivedField optype="categorical" dataType="integer">
+					<NormDiscrete field="Integer labels" value="1"/>
+				</DerivedField>
+			</NeuralOutput>
+			<NeuralOutput outputNeuron="2/3">
+				<DerivedField optype="categorical" dataType="integer">
+					<NormDiscrete field="Integer labels" value="2"/>
+				</DerivedField>
+			</NeuralOutput>
+			<NeuralOutput outputNeuron="2/4">
+				<DerivedField optype="categorical" dataType="integer">
+					<NormDiscrete field="Integer labels" value="3"/>
+				</DerivedField>
+			</NeuralOutput>
+			<NeuralOutput outputNeuron="2/5">
+				<DerivedField optype="categorical" dataType="integer">
+					<NormDiscrete field="Integer labels" value="4"/>
+				</DerivedField>
+			</NeuralOutput>
+			<NeuralOutput outputNeuron="2/6">
+				<DerivedField optype="categorical" dataType="integer">
+					<NormDiscrete field="Integer labels" value="5"/>
+				</DerivedField>
+			</NeuralOutput>
+			<NeuralOutput outputNeuron="2/7">
+				<DerivedField optype="categorical" dataType="integer">
+					<NormDiscrete field="Integer labels" value="6"/>
+				</DerivedField>
+			</NeuralOutput>
+			<NeuralOutput outputNeuron="2/8">
+				<DerivedField optype="categorical" dataType="integer">
+					<NormDiscrete field="Integer labels" value="7"/>
+				</DerivedField>
+			</NeuralOutput>
+			<NeuralOutput outputNeuron="2/9">
+				<DerivedField optype="categorical" dataType="integer">
+					<NormDiscrete field="Integer labels" value="8"/>
+				</DerivedField>
+			</NeuralOutput>
+			<NeuralOutput outputNeuron="2/10">
+				<DerivedField optype="categorical" dataType="integer">
+					<NormDiscrete field="Integer labels" value="9"/>
+				</DerivedField>
+			</NeuralOutput>
+			<NeuralOutput outputNeuron="2/11">
+				<DerivedField optype="categorical" dataType="integer">
+					<NormDiscrete field="Integer labels" value="10"/>
+				</DerivedField>
+			</NeuralOutput>
+		</NeuralOutputs>
+	</NeuralNetwork>
+</PMML>

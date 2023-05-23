@@ -7,6 +7,7 @@
 
 
 import numpy as np
+import pandas as pd
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
@@ -34,26 +35,30 @@ import config
 # Converts from class vector to integer class
 # Scikit doesn't accept vector classes, it expects integers
 def class_vector_to_integer(labels):
+    # Temporary numpy copy of the data frame labels
+    temp_labels = labels.to_numpy(copy=True)
     # New array that will hold integer for which class it belongs to instead of class vector
     int_arr = []
 
     # Go through all segments
-    for vector in labels:
+    for vector in temp_labels:
         # Convert vector to int
         class_int = np.argmax(vector)
         # Add int to the new int array
         int_arr.append(class_int)
 
     # Return int array that will replace class vector array
-    return np.array(int_arr)
+    return pd.DataFrame(np.array(int_arr), columns = ['Integer labels'])
 #==============================================================================
 # Converts from integer classes to class vector
 def integer_to_class_vector(labels, num_classes):
+    # Temporary numpy copy of the data frame labels
+    temp_labels = labels.to_numpy(copy=True)
     # New array that will hold all class vectors
     vector_arr = []
 
     # Go through all segments
-    for int_class in labels:
+    for int_class in temp_labels:
         # Create array of zeros
         class_vector = np.zeros(num_classes)
         # Set the position (class) which it belongs to to 1
@@ -61,7 +66,7 @@ def integer_to_class_vector(labels, num_classes):
         vector_arr.append(class_vector)
 
     # Return array containing class vectors
-    return np.array(vector_arr)
+    return pd.DataFrame(np.array(vector_arr), columns = ['Class 0', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10'])
 #==============================================================================
 # Fix class imbalance
 def class_imb(data, labels):
@@ -82,8 +87,8 @@ def lda(data, labels, num_components, num_splits, lda_solver):
     kfold = KFold(n_splits=num_splits, shuffle=True)
     for train, test in kfold.split(data):
 
-        data_train, data_test = data[train], data[test]
-        label_train, label_test = labels[train], labels[test]
+        data_train, data_test = data.iloc[train], data.iloc[test]
+        label_train, label_test = labels.iloc[train], labels.iloc[test]
 
         # Fix class imbalance in training data
         data_train, label_train = class_imb(data_train, label_train)
@@ -112,6 +117,7 @@ def lda(data, labels, num_components, num_splits, lda_solver):
     # Save classifier to pmml file
     sklearn2pmml(clf, "./trained_scikit_models/lda.pmml", with_repr = True)
     print('Saved LDA classifier to:', "./trained_scikit_models/lda.pmml")
+    print("=======================================================================")
 #==============================================================================
 # Train SVM
 def support_vector_machine(data, labels, num_splits, kernel, gamma, decision_function_shape):
@@ -123,8 +129,8 @@ def support_vector_machine(data, labels, num_splits, kernel, gamma, decision_fun
     kfold = KFold(n_splits=num_splits, shuffle=True)
     for train, test in kfold.split(data):
 
-        data_train, data_test = data[train], data[test]
-        label_train, label_test = labels[train], labels[test]
+        data_train, data_test = data.iloc[train], data.iloc[test]
+        label_train, label_test = labels.iloc[train], labels.iloc[test]
 
         # Fix class imbalance in training data
         data_train, label_train = class_imb(data_train, label_train)
@@ -153,6 +159,7 @@ def support_vector_machine(data, labels, num_splits, kernel, gamma, decision_fun
     # Save classifier to pmml file
     sklearn2pmml(clf, "./trained_scikit_models/svm.pmml", with_repr = True)
     print('Saved SVM classifier to:', "./trained_scikit_models/svm.pmml")
+    print("=======================================================================")
 #==============================================================================
 # Train KNN
 def knn(data, labels, num_splits, num_neighbors, weight_function, leaf_size):
@@ -164,8 +171,8 @@ def knn(data, labels, num_splits, num_neighbors, weight_function, leaf_size):
     kfold = KFold(n_splits=num_splits, shuffle=True)
     for train, test in kfold.split(data):
 
-        data_train, data_test = data[train], data[test]
-        label_train, label_test = labels[train], labels[test]
+        data_train, data_test = data.iloc[train], data.iloc[test]
+        label_train, label_test = labels.iloc[train], labels.iloc[test]
 
         # Fix class imbalance in training data
         data_train, label_train = class_imb(data_train, label_train)
@@ -194,6 +201,7 @@ def knn(data, labels, num_splits, num_neighbors, weight_function, leaf_size):
     # Save classifier to pmml file
     sklearn2pmml(clf, "./trained_scikit_models/knn.pmml", with_repr = True)
     print('Saved KNN classifier to:', "./trained_scikit_models/knn.pmml")
+    print("=======================================================================")
 #==============================================================================
 # Train MLP
 def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model, alpha, iterations, num_splits, train_set_proportion):
@@ -205,14 +213,15 @@ def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model,
     kfold = KFold(n_splits=num_splits, shuffle=True)
     for train, test in kfold.split(data):
 
-        data_train, data_test = data[train], data[test]
-        label_train, label_test = labels[train], labels[test]
+        data_train, data_test = data.iloc[train], data.iloc[test]
+        label_train, label_test = labels.iloc[train], labels.iloc[test]
 
         # Fix class imbalance in training data
         data_train, label_train = class_imb(data_train, label_train)
 
         # Create MLP model
-        clf = PMMLPipeline([("classifier", MLPClassifier(hidden_layer_sizes=(layers,), activation=activation_func, solver=solver_func, learning_rate=learning_rate_model, learning_rate_init = alpha, max_iter=iterations, early_stopping=False, validation_fraction=1-train_set_proportion))])
+        clf = PMMLPipeline([("classifier", MLPClassifier(hidden_layer_sizes=(layers,), activation=activation_func, solver=solver_func, learning_rate=learning_rate_model,
+            learning_rate_init = alpha, max_iter=iterations, early_stopping=False, validation_fraction=1-train_set_proportion))])
 
         # Train model
         clf.fit(data_train, label_train)
@@ -235,6 +244,7 @@ def mlp(data, labels, layers, activation_func, solver_func, learning_rate_model,
     # Save classifier to pmml file
     sklearn2pmml(clf, "./trained_scikit_models/mlp.pmml", with_repr = True)
     print('Saved MLP classifier to:', "./trained_scikit_models/mlp.pmml")
+    print("=======================================================================")
 #==============================================================================
 # XGBoost doesn't work for python 32-bit
 #==============================================================================
@@ -248,8 +258,8 @@ def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_class
     kfold = KFold(n_splits=num_splits, shuffle=True)
     for train, test in kfold.split(data):
 
-        data_train, data_test = data[train], data[test]
-        label_train, label_test = labels[train], labels[test]
+        data_train, data_test = data.iloc[train], data.iloc[test]
+        label_train, label_test = labels.iloc[train], labels.iloc[test]
 
         # Fix class imbalance in training data
         data_train, label_train = class_imb(data_train, label_train)
@@ -261,10 +271,7 @@ def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_class
         clf.fit(data_train, label_train)
 
         # Evalute the model
-        predictions = bst.predict(data_test)
-        accuracy = accuracy_score(label_test, predictions)
-        #accuracy = bst.score(data_test, label_test)
-        print(accuracy)
+        accuracy = clf.score(data_test, label_test)
         total_accuracy = total_accuracy + accuracy
 
 
@@ -273,7 +280,7 @@ def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_class
     print('Total Accuracy: %.2f' % (total_accuracy*100))
 
     # Print confusion matrix
-    predictions = bst.predict(data)
+    predictions = clf.predict(data)
     accuracy = accuracy_score(labels, predictions)
     print(accuracy)
     print(confusion_matrix(labels, predictions))
@@ -281,6 +288,7 @@ def xgboost_classifier(data, labels, train_set_proportion, num_splits, num_class
     # Save classifier to pmml file
     sklearn2pmml(clf, "./trained_scikit_models/xgb.pmml", with_repr = True)
     print('Saved XGBoost classifier to:', "./trained_scikit_models/xgb.pmml")
+    print("=======================================================================")
 #==============================================================================
 #==============================================================================
 # TensorFlow doesn't work for python 3.7

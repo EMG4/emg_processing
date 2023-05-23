@@ -10,6 +10,7 @@ import sys
 import argparse
 import os
 import numpy as np
+import pandas as pd
 # TensorFlow doesn't work for python 3.7
 import tensorflow as tf
 from tensorflow import keras
@@ -21,7 +22,6 @@ from segmentation.segmentation import data_segmentation, label_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func, ofnda_func
 from classifier.classifier import lda, support_vector_machine, knn, mlp
-import pickle
 
 
 #==============================================================================
@@ -55,7 +55,7 @@ def main(argv):
     parser.add_argument('--ol', default=0.125, type = float, help = "Set window overlap (s)")
     parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
     # Dimension Reduction parameters 
-    parser.add_argument('--pcanc', default=1, type = int, help = "Set number of PCA components (5 has best performance, 1 is needed for real time 250ms)")
+    parser.add_argument('--pcanc', default=2, type = int, help = "Set number of PCA components (5 has best performance)")
     # Multiple classifier parameters
     parser.add_argument('--tsp', default=0.8, type = float, help = "Set training set proportions (between 0 and 1)")
     parser.add_argument('-k', default=5, type = int, help = "Set k for k fold cross validation")
@@ -115,7 +115,9 @@ def main(argv):
 
 
     # Performs feature extraction
+    # Here both segment arr and label arr is also converted to pandas dataframe and will remain like a pandas dataframe
     segment_arr = fe(segment_arr, args.hz)
+    label_arr = pd.DataFrame(label_arr, columns = ['Class 0', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10'])
 
 
     # Chooses dimension reduction
@@ -144,6 +146,7 @@ def main(argv):
         tf.saved_model.save(model, dir_path)
 
         print('Saved TF ANN model to:', dir_path)
+        print("=======================================================================")
     # KNN
     elif(args.rknn):
         knn(segment_arr, label_arr, args.k, args.nn, args.wf, args.nl)

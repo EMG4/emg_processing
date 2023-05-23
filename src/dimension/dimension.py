@@ -9,6 +9,7 @@
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import numpy as np
+import pandas as pd
 
 
 #==============================================================================
@@ -30,7 +31,7 @@ def pca_func(segment_arr, numb_components):
     pca.fit(standardized_data)
 
     # Return PCA processed segment array
-    return pca.fit_transform(standardized_data)
+    return pd.DataFrame(pca.fit_transform(standardized_data), columns=['PCA%i' % i for i in range(numb_components)], index=segment_arr.index)
 #==============================================================================
 # Function perfoming OFNDA
 def ofnda_func():

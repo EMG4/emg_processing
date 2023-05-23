@@ -15,8 +15,7 @@ from segmentation.segmentation import data_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func
 from sklearn.neighbors import KNeighborsClassifier
-import pickle
-from pypmml import Model
+from jpmml_evaluator import make_evaluator
 
 
 #==============================================================================
@@ -58,7 +57,7 @@ def load_data():
         sample_counter += 1
     return buf
 #==============================================================================
-# Loads the ML model or data
+# Loads the trained model
 def load_model(file_name):
     tf_model = 0
     if(tf_model):
@@ -70,7 +69,7 @@ def load_model(file_name):
         '''
     else:
         # Load data (scikit learn)
-        clf = Model.load(file_name)
+        clf = make_evaluator(file_name).verify()
         return clf
 #==============================================================================
 # Main function
@@ -80,7 +79,7 @@ def main():
     window_size = 0.25
     overlap = 0.125
     number_classes = 11
-    number_principal_components = 5
+    number_principal_components = 2
 
     # Load the model from file
     model = load_model(file_name)
@@ -104,9 +103,8 @@ def main():
         segment_arr = pca_func(segment_arr, number_principal_components)
 
         # The model predicts which class the data belongs to
-        prediction = model.predict(segment_arr)
-
-        print(prediction)
+        prediction = evaluator.evaluateAll(data)
+        print(prediction[['Integer labels']])
 #==============================================================================
 if __name__ == "__main__":
     main()
