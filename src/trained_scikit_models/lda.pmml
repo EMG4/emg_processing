@@ -2,7 +2,7 @@
 <PMML xmlns="http://www.dmg.org/PMML-4_4" xmlns:data="http://jpmml.org/jpmml-model/InlineTable" version="4.4">
 	<Header>
 		<Application name="SkLearn2PMML package" version="0.92.2"/>
-		<Timestamp>2023-05-23T08:16:22Z</Timestamp>
+		<Timestamp>2023-05-23T18:27:39Z</Timestamp>
 	</Header>
 	<MiningBuildTask>
 		<Extension name="repr">PMMLPipeline(steps=[('classifier', LinearDiscriminantAnalysis(solver='eigen'))])</Extension>
@@ -41,9 +41,9 @@
 					<Output>
 						<OutputField name="decisionFunction(0)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.3993867772287096">
-						<NumericPredictor name="PCA0" coefficient="0.006708512771108568"/>
-						<NumericPredictor name="PCA1" coefficient="-0.00609442200971277"/>
+					<RegressionTable intercept="-2.3980441774713745">
+						<NumericPredictor name="PCA0" coefficient="-0.006137803144193998"/>
+						<NumericPredictor name="PCA1" coefficient="0.002448695358746006"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -57,9 +57,9 @@
 					<Output>
 						<OutputField name="decisionFunction(1)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.400321606400117">
-						<NumericPredictor name="PCA0" coefficient="0.007771143270448058"/>
-						<NumericPredictor name="PCA1" coefficient="0.011837496239528547"/>
+					<RegressionTable intercept="-2.400530905984558">
+						<NumericPredictor name="PCA0" coefficient="0.012239670917166375"/>
+						<NumericPredictor name="PCA1" coefficient="0.045435041277057366"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -73,9 +73,9 @@
 					<Output>
 						<OutputField name="decisionFunction(2)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.398567298432442">
-						<NumericPredictor name="PCA0" coefficient="0.004325608977407189"/>
-						<NumericPredictor name="PCA1" coefficient="-0.005289219689692955"/>
+					<RegressionTable intercept="-2.401781095502895">
+						<NumericPredictor name="PCA0" coefficient="0.004290626502522704"/>
+						<NumericPredictor name="PCA1" coefficient="0.061241538499882654"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -89,9 +89,9 @@
 					<Output>
 						<OutputField name="decisionFunction(3)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.3982020794576195">
-						<NumericPredictor name="PCA0" coefficient="-0.0029358292074352097"/>
-						<NumericPredictor name="PCA1" coefficient="0.0034961762610071193"/>
+					<RegressionTable intercept="-2.401336705121312">
+						<NumericPredictor name="PCA0" coefficient="0.022853305880568758"/>
+						<NumericPredictor name="PCA1" coefficient="0.03878782939111466"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -105,9 +105,9 @@
 					<Output>
 						<OutputField name="decisionFunction(4)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.4002098288714775">
-						<NumericPredictor name="PCA0" coefficient="0.0023700421169478266"/>
-						<NumericPredictor name="PCA1" coefficient="-0.022501060335039434"/>
+					<RegressionTable intercept="-2.4064406433069756">
+						<NumericPredictor name="PCA0" coefficient="0.037592921896655536"/>
+						<NumericPredictor name="PCA1" coefficient="-0.054927904257526944"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -121,9 +121,9 @@
 					<Output>
 						<OutputField name="decisionFunction(5)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.4000094212474323">
-						<NumericPredictor name="PCA0" coefficient="-0.005645120220753856"/>
-						<NumericPredictor name="PCA1" coefficient="-0.016325749340203994"/>
+					<RegressionTable intercept="-2.4059305617241797">
+						<NumericPredictor name="PCA0" coefficient="-0.045887513566378046"/>
+						<NumericPredictor name="PCA1" coefficient="0.009094433483832659"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -137,9 +137,9 @@
 					<Output>
 						<OutputField name="decisionFunction(6)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.4041670673395052">
-						<NumericPredictor name="PCA0" coefficient="0.009663882351187461"/>
-						<NumericPredictor name="PCA1" coefficient="0.028261684909243915"/>
+					<RegressionTable intercept="-2.3980058727722535">
+						<NumericPredictor name="PCA0" coefficient="0.00421884119229365"/>
+						<NumericPredictor name="PCA1" coefficient="0.006678269657112922"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -153,9 +153,9 @@
 					<Output>
 						<OutputField name="decisionFunction(7)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.411627528723541">
-						<NumericPredictor name="PCA0" coefficient="-0.02016070019473568"/>
-						<NumericPredictor name="PCA1" coefficient="0.019971907599824097"/>
+					<RegressionTable intercept="-2.4047933970336897">
+						<NumericPredictor name="PCA0" coefficient="-0.04249687951609969"/>
+						<NumericPredictor name="PCA1" coefficient="0.008735646654881885"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -169,9 +169,9 @@
 					<Output>
 						<OutputField name="decisionFunction(8)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.398531525406082">
-						<NumericPredictor name="PCA0" coefficient="-7.573631012359456E-4"/>
-						<NumericPredictor name="PCA1" coefficient="-0.012019531306746154"/>
+					<RegressionTable intercept="-2.3994586472225814">
+						<NumericPredictor name="PCA0" coefficient="0.017023915337067676"/>
+						<NumericPredictor name="PCA1" coefficient="-0.020937899845138788"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -185,9 +185,9 @@
 					<Output>
 						<OutputField name="decisionFunction(9)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.4066887595745765">
-						<NumericPredictor name="PCA0" coefficient="-0.016092464288398077"/>
-						<NumericPredictor name="PCA1" coefficient="-0.01525895483326331"/>
+					<RegressionTable intercept="-2.4140903595948013">
+						<NumericPredictor name="PCA0" coefficient="-0.04200514813612087"/>
+						<NumericPredictor name="PCA1" coefficient="-0.09812069926141626"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>
@@ -201,9 +201,9 @@
 					<Output>
 						<OutputField name="decisionFunction(10)" optype="continuous" dataType="double" isFinalResult="false"/>
 					</Output>
-					<RegressionTable intercept="-2.4081266424038605">
-						<NumericPredictor name="PCA0" coefficient="0.017002792475659896"/>
-						<NumericPredictor name="PCA1" coefficient="-0.019892434244003405"/>
+					<RegressionTable intercept="-2.401326479836715">
+						<NumericPredictor name="PCA0" coefficient="0.019885648848557924"/>
+						<NumericPredictor name="PCA1" coefficient="-0.0429262296890478"/>
 					</RegressionTable>
 				</RegressionModel>
 			</Segment>

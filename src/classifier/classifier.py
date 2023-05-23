@@ -329,8 +329,8 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
     kfold = KFold(n_splits = num_splits, shuffle=True)
     for train, test in kfold.split(data):
 
-        data_train, data_test = data[train], data[test]
-        label_train, label_test = labels[train], labels[test]
+        data_train, data_test = data.iloc[train], data.iloc[test]
+        label_train, label_test = labels.iloc[train], labels.iloc[test]
 
         # Class_imb expects integer classes, not class vector
         # Fix class imbalance
