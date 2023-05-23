@@ -103,7 +103,7 @@ def main():
         segment_arr = pca_func(segment_arr, number_principal_components)
 
         # The model predicts which class the data belongs to
-        prediction = model.evaluateAll(data)
+        prediction = model.evaluateAll(segment_arr)
         print(prediction[['Integer labels']])
 #==============================================================================
 if __name__ == "__main__":
