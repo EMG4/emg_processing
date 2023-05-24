@@ -17,8 +17,7 @@ To train a classifier:
 ```
 python3 main.py -f [input_file] --hz [sampling_frequency] --rknn 1
 ```
-The last argument --rknn trains a KNN classifer
-Run the following command for more options:
+The last argument --rknn trains a KNN classifer. Run the following command for more options:
 ```
 python3 main.py --help
 ```
