@@ -12,6 +12,22 @@ Open source project for processing of emg signals and classification of finger m
 + tsfel 0.1.5
 + xgboost 1.7.5
 
+## Usage
+To train a classifier:
+```
+python3 main.py -f [input_file] --hz [sampling_frequency] --rknn 1
+```
+The last argument --rknn trains a KNN classifer
+Run the following command for more options:
+```
+python3 main.py --help
+```
+
+To run the trained classifier on a microcontroller (parameters are changed in the source file main_board.py):
+```
+python3 main_board.py
+```
+
 ## Contact
 Carl Larsson - cln20001@student.mdu.se
 
