@@ -37,7 +37,7 @@ def load_model(file_name):
 # Main function
 def main():
     file_name = "./trained_scikit_models/svm.pmml"
-    sampling_frequency = 1400
+    sampling_frequency = 1000
     window_size = 0.25
     overlap = 0.125
     number_classes = 11
@@ -45,6 +45,8 @@ def main():
 
     # Load the model from file
     model = load_model(file_name)
+
+    input("Press enter to start classification...")
 
     while(True):
         # Load data

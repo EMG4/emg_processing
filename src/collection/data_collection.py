@@ -34,11 +34,11 @@ def load_data():
     read_voltage_from_adc = ReadLine(ser)
     sample_counter = 0
     buf = []
-    number_samples_to_load = 1000
+    number_samples_to_load = 377
     while sample_counter < number_samples_to_load:
         read_voltage_from_adc = ser.readline()
         read_voltage_from_adc = read_voltage_from_adc.decode('utf-8').rstrip('\n').rstrip('\r')
-        if read_voltage_from_adc != "":
+        if read_voltage_from_adc != "" and '\r' not in str(read_voltage_from_adc):
             #print(read_voltage_from_adc)
             buf.append(int(read_voltage_from_adc))
             sample_counter += 1
