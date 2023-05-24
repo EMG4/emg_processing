@@ -9,7 +9,7 @@
 import numpy as np
 #import tensorflow as tf
 import os
-import serial
+from collection.data_collection import load_data
 from filtering.filter import bandpass, notch
 from segmentation.segmentation import data_segmentation
 from feature.feature import fe
@@ -18,44 +18,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from jpmml_evaluator import make_evaluator
 
 
-#==============================================================================
-# Function and class for reading data
-# Class for reading data
-ser = serial.Serial("/dev/ttyACM1")
-class ReadLine:
-    def __init__(self, s):
-        self.buf = bytearray()
-        self.s = s
-    def readline(self):
-        i = self.buf.find(b"\n")
-        if i >= 0:
-            r = self.buf[:i+1]
-            self.buf = self.buf[i+1:]
-            return r
-        while True:
-            i = max(1, min(2048, self.s.sin_waiting))
-            data = self.s.read(i)
-            i = data.find(b"\n")
-            if i >= 0:
-                r = self.buf + data[:i+1]
-                self.buf[0:] = data[i+1:]
-                return r
-            else:
-                self.buf.extend(data)
-#==============================================================================
-# Function for reading data
-def load_data():
-    read_voltage_from_adc = ReadLine(ser)
-    sample_counter = 0
-    buf = []
-    number_samples_to_load = 375
-    while sample_counter < number_samples_to_load:
-        read_voltage_from_adc = ser.readline()
-        read_voltage_from_adc = read_voltage_from_adc.decode('utf-8').rstrip('\n').rstrip('\r')
-        #print(read_voltage_from_adc)
-        buf.append(int(read_voltage_from_adc))
-        sample_counter += 1
-    return buf
 #==============================================================================
 # Loads the trained model
 def load_model(file_name):
@@ -74,7 +36,7 @@ def load_model(file_name):
 #==============================================================================
 # Main function
 def main():
-    file_name = "./trained_scikit_models/knn.pmml"
+    file_name = "./trained_scikit_models/svm.pmml"
     sampling_frequency = 1400
     window_size = 0.25
     overlap = 0.125
