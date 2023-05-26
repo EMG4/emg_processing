@@ -1,0 +1,9 @@
+.idea/
+classifier/__pycache__/
+collection/__pycache__/
+dimension/__pycache__/
+feature/__pycache__/
+filtering/__pycache__/
+optimizer/__pycache__/
+segmentation/__pycache__/
+
