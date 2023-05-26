@@ -7,23 +7,18 @@
 import numpy as np
 import argparse
 import sys
-# import tensorflow as tf
 import os
 import time
 import threading
 import keyboard as kb
-# from pandas.io.pickle import pc
 from collection.data_collection import load_data
 from filtering.filter import bandpass, notch
 from segmentation.segmentation import data_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func
-# from sklearn.neighbors import KNeighborsClassifier
 from jpmml_evaluator import make_evaluator
 # ==============================================================================
 # Function to read the keyboard inputs
-
-
 def readKey():
     global label
     while True:
@@ -158,18 +153,17 @@ def main(argv):
 
                 # The model predicts which class the data belongs to
                 prediction = model.evaluateAll(segment_arr)
-                # print(prediction[['Integer labels']])
                 prediction['key'] = label
                 toPrint = prediction[header].to_string(
                     header=False, index=False, columns=header)
-                # print(str(prediction[['Integer labels']]))
-                # print(toPrint)
                 if (label == 11):
                     break
                 f.write(toPrint+'\n')
                 f.flush()
-        t1.join()
+        print("Ending program...")
         f.close()
+        os._exit(os.EX_OK)
+
 
 # ==============================================================================
 if __name__ == "__main__":
