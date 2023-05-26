@@ -26,7 +26,7 @@ To run the trained classifier and print the predictions on a microcontroller:
 ```
 python3 main_board.py -f [input_file] --p True
 ```
-To save the predictions to a file with labels:
+To save the predictions to a file with labels (intended to be run on a pc):
 ```
 python3 main_board.py -f [input_file] --w True
 ```
