@@ -27,6 +27,9 @@ To run the trained classifier on a microcontroller (parameters are changed in th
 python3 main_board.py
 ```
 
+## Disclaimer
+ANN + GA has not been properly tested and should not be considered finished.
+
 ## Contact
 Carl Larsson - cln20001@student.mdu.se
 

@@ -377,7 +377,8 @@ def ann(data, labels, num_splits, dropout_rate, input_dim, layers, solver_func, 
     print('Total Accuracy: %.2f' % (total_accuracy*100))
 
     # Confusion matrix
-    predictions = class_vector_to_integer(model.predict(data, verbose = 0))
+    predictions = class_vector_to_integer(pd.DataFrame(model.predict(data, verbose = 0),
+        columns = ['Class 0', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10']))
     prediction_labels = class_vector_to_integer(labels)
     accuracy = accuracy_score(prediction_labels, predictions)
     print(accuracy)
