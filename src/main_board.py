@@ -85,7 +85,7 @@ def main(argv):
 
     args = parser.parse_args(argv)
     if not (args.p or args.w):
-        parser.error("Choose mode to run, -p or -w\nExiting...")
+        parser.error("Choose mode to run, --p True or --w True\nExiting...")
 
     file_name = args.f
     sampling_frequency = 1000
@@ -124,8 +124,7 @@ def main(argv):
             # The model predicts which class the data belongs to
             prediction = model.evaluateAll(segment_arr)
             print(prediction[['Integer labels']])
-            print("Classification took: " +
-                  str(time.time()-time_to_make_classification))
+            print(f"Classification took: {time.time()-time_to_make_classification:.1f}s")
             time_to_make_classification = time.time()
 
     elif args.w:
@@ -135,7 +134,7 @@ def main(argv):
         t1.start()
         header = ["Integer labels", "key"]
         file_to_write = 'dataset.txt'
-        print("Writing to file", file_to_write)
+        print("Writing to file: ", file_to_write)
         with open(file_to_write, 'w') as f:
             while True:
                 # Load data
