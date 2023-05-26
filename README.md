@@ -22,10 +22,19 @@ The last argument --rknn trains a KNN classifer. Run the following command for m
 python3 main.py --help
 ```
 
-To run the trained classifier on a microcontroller (parameters are changed in the source file main_board.py):
+To run the trained classifier and print the predictions on a microcontroller:
 ```
-python3 main_board.py
+python3 main_board.py -f [input_file] --p True
 ```
+To save the predictions to a file with labels:
+```
+python3 main_board.py -f [input_file] --w True
+```
+For more information:
+```
+python3 main_board.py --help
+```
+
 
 ## Disclaimer
 ANN + GA has not been properly tested and should not be considered finished.
