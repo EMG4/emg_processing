@@ -8,13 +8,14 @@
 
 import numpy as np
 #import tensorflow as tf
-import os
+# import os
+import time
 from collection.data_collection import load_data
 from filtering.filter import bandpass, notch
 from segmentation.segmentation import data_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func
-from sklearn.neighbors import KNeighborsClassifier
+# from sklearn.neighbors import KNeighborsClassifier
 from jpmml_evaluator import make_evaluator
 
 
@@ -43,11 +44,15 @@ def main():
     number_classes = 11
     number_principal_components = 2
 
+    time_to_load_model = time.time()
     # Load the model from file
+    print("Loading Model")
     model = load_model(file_name)
+    print("Model loaded in: "+str(time.time()-time_to_load_model))
 
     input("Press enter to start classification...")
 
+    time_to_make_classification = time.time()
     while(True):
         # Load data
         data = load_data()
@@ -69,6 +74,8 @@ def main():
         # The model predicts which class the data belongs to
         prediction = model.evaluateAll(segment_arr)
         print(prediction[['Integer labels']])
+        print("Classification took: "+str(time.time()-time_to_make_classification)
+        time_to_make_classification = time.time()
 #==============================================================================
 if __name__ == "__main__":
     main()
