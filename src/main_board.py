@@ -12,6 +12,7 @@ import sys
 import os
 import time
 import threading
+import signal
 import keyboard as kb
 from collection.data_collection import load_data
 from filtering.filter import bandpass, notch
@@ -20,6 +21,18 @@ from feature.feature import fe
 from dimension.dimension import pca_func
 from jpmml_evaluator import make_evaluator
 
+# ==============================================================================
+running = True
+
+# ==============================================================================
+# Signal handler function to handle SIGINT signal
+def sigint_handler(signum, frame):
+    global running
+    running = False
+
+# ==============================================================================
+# Register the signal handler
+signal.signal(signal.SIGINT, sigint_handler)
 
 # ==============================================================================
 # Function to read the keyboard inputs
@@ -71,7 +84,8 @@ def load_model(file_name):
 def main(argv):
     parser = argparse.ArgumentParser(prog="main_board.py", description="EMG finger movement classification on a microcontroller")
 
-    parser.add_argument('-f', required=True, type=str, help="Enter filepath of pmml-model to load")
+    parser.add_argument('--f', required=True, type=str, help="Enter filepath of pmml-model to load")
+    parser.add_argument('--d', required=True, type=str, help="Enter filepath of UART")
     parser.add_argument('--p', default=False, type=bool, help="Printing the classification, tested on beaglebone green")
     parser.add_argument('--w', default=False, type=bool, help="Write the classification and keyboard input to file, needs to be run as root")
     parser.add_argument('--hz', default=1000, type = int, help = "Set sampling rate")
@@ -86,24 +100,23 @@ def main(argv):
     # One of the two modes has to be selected. Running on board or writing to file on computer
     if not (args.p or args.w):
         parser.error("Choose mode to run, --p True or --w True\nExiting...")
+    elif not args.d:
+        parser.error("Please specify directory for the serial device\nExiting...")
+
 
     # Load trained classifier
     time_to_load_model = time.time()
     print("Loading Model: ", args.f)
     model = load_model(args.f)
     print(f"Model loaded in: {time.time()-time_to_load_model:.1f}s")
-    t1 = threading.Thread(target=readKey)
-    t1.start()
     input("Press enter to start classification...")
-            # Run classification on the microcontroller
+    # Run classification on the microcontroller
     if args.p:
-        time_to_make_classification = time.time()
-        while (True):
-            if (label == 11):
-                break
 
-            # Load data
-            data = load_data(args.nrs)
+        time_to_make_classification = time.time()
+        while (running):
+                        # Load data
+            data = load_data(args.nrs, args.d)
             data = np.array(data)
 
             # Perform filtering
@@ -137,7 +150,7 @@ def main(argv):
         with open(file_to_write, 'w') as f:
             while True:
                 # Load data
-                data = load_data(args.nrs)
+                data = load_data(args.nrs, args.d)
                 data = np.array(data)
 
                 # Perform filtering
