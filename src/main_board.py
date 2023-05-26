@@ -74,7 +74,7 @@ def main():
         # The model predicts which class the data belongs to
         prediction = model.evaluateAll(segment_arr)
         print(prediction[['Integer labels']])
-        print("Classification took: "+str(time.time()-time_to_make_classification)
+        print("Classification took: "+str(time.time()-time_to_make_classification))
         time_to_make_classification = time.time()
 #==============================================================================
 if __name__ == "__main__":
