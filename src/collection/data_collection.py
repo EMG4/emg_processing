@@ -7,7 +7,10 @@ import serial
 #==============================================================================
 # Function and class for reading data
 # Class for reading data
-ser = serial.Serial("/dev/ttyACM1")
+def initialize_the_serial_connection(path):
+    ser = serial.Serial(path)
+    return ser
+
 class ReadLine:
     def __init__(self, s):
         self.buf = bytearray()
@@ -30,7 +33,8 @@ class ReadLine:
                 self.buf.extend(data)
 #==============================================================================
 # Function for reading data
-def load_data(number_samples_to_load):
+def load_data(number_samples_to_load, serial_path):
+    ser = initialize_the_serial_connection(serial_path)
     read_voltage_from_adc = ReadLine(ser)
     sample_counter = 0
     buf = []
