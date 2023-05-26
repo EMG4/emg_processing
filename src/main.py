@@ -34,7 +34,7 @@ def load_data(file_name):
 #==============================================================================
 # Main function
 def main(argv):
-    parser = argparse.ArgumentParser(prog = "main.py", description = "EMG finger movement identification")
+    parser = argparse.ArgumentParser(prog = "main.py", description = "Training of a classifier for EMG finger movement identification")
 
     # Options
     parser.add_argument('-f', required = True, type = str, help = "Choose input file")

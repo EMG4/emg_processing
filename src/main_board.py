@@ -4,6 +4,8 @@
 # Description: Main file used for running the classifier on the board
 # Date: 2023-05-10
 # ==============================================================================
+
+
 import numpy as np
 import argparse
 import sys
@@ -17,10 +19,10 @@ from segmentation.segmentation import data_segmentation
 from feature.feature import fe
 from dimension.dimension import pca_func
 from jpmml_evaluator import make_evaluator
+
+
 # ==============================================================================
 # Function to read the keyboard inputs
-
-
 def readKey():
     global label
     while True:
@@ -51,8 +53,6 @@ def readKey():
             label = 0
 # ==============================================================================
 # Loads the trained model
-
-
 def load_model(file_name):
     tf_model = 0
     if (tf_model):
@@ -66,41 +66,35 @@ def load_model(file_name):
         # Load data (scikit learn)
         clf = make_evaluator(file_name).verify()
         return clf
-
 # ==============================================================================
 # Main function
-
-
 def main(argv):
-    parser = argparse.ArgumentParser(
-        prog="main.py", description="EMG finger movement classification")
-    parser.add_argument('-f', required=True, type=str,
-                        help="Enter filepath of pmml-model to load")
+    parser = argparse.ArgumentParser(prog="main_board.py", description="EMG finger movement classification on a microcontroller")
 
-    parser.add_argument('--p', default=False, type=bool,
-                        help="Printing the classification, tested on beaglebone green")
-
-    parser.add_argument('--w', default=False, type=bool,
-                        help="Write the classification and keyboard input to file, needs to be run as root")
+    parser.add_argument('-f', required=True, type=str, help="Enter filepath of pmml-model to load")
+    parser.add_argument('--p', default=False, type=bool, help="Printing the classification, tested on beaglebone green")
+    parser.add_argument('--w', default=False, type=bool, help="Write the classification and keyboard input to file, needs to be run as root")
+    parser.add_argument('--hz', required = True, type = int, help = "Set sampling rate")
+    parser.add_argument('--ws', default=0.250, type = float, help = "Set window size (s)")
+    parser.add_argument('--ol', default=0.125, type = float, help = "Set window overlap (s)")
+    parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
+    parser.add_argument('--pcanc', default=2, type = int, help = "Set number of PCA components")
 
     args = parser.parse_args(argv)
+
+    # One of the two modes has to be selected. Running on board or writing to file on computer
     if not (args.p or args.w):
         parser.error("Choose mode to run, --p True or --w True\nExiting...")
 
-    file_name = args.f
-    sampling_frequency = 1000
-    window_size = 0.25
-    overlap = 0.125
-    number_classes = 11
-    number_principal_components = 2
+    # Load trained classifier
     time_to_load_model = time.time()
-    print("Loading Model: ", file_name)
-    model = load_model(file_name)
+    print("Loading Model: ", args.f)
+    model = load_model(args.f)
     print(f"Model loaded in: {time.time()-time_to_load_model:.1f}s")
     input("Press enter to start classification...")
 
+    # Run classification on the microcontroller
     if args.p:
-
         time_to_make_classification = time.time()
         while (True):
             # Load data
@@ -108,31 +102,32 @@ def main(argv):
             data = np.array(data)
 
             # Perform filtering
-            data = bandpass(data, sampling_frequency)
-            data = notch(data, sampling_frequency)
+            data = bandpass(data, args.hz)
+            data = notch(data, args.hz)
 
             # Perform segmentation
             segment_arr = data_segmentation(
-                data, sampling_frequency, window_size, overlap, number_classes)
+                data, args.hz, args.ws, args.ol, args.nc)
 
             # Performs feature extraction
-            segment_arr = fe(segment_arr, sampling_frequency)
+            segment_arr = fe(segment_arr, args.hz)
 
             # Perform PCA
-            segment_arr = pca_func(segment_arr, number_principal_components)
+            segment_arr = pca_func(segment_arr, args.pcanc)
 
             # The model predicts which class the data belongs to
             prediction = model.evaluateAll(segment_arr)
             print(prediction[['Integer labels']])
             print(f"Classification took: {time.time()-time_to_make_classification:.1f}s")
             time_to_make_classification = time.time()
-
+    # Write to file on computer
     elif args.w:
-        # Load the model from file
+        # Create thread to read keyboard
         print("Starting thread to read keyboard input...")
         t1 = threading.Thread(target=readKey)
         t1.start()
         header = ["Integer labels", "key"]
+        # Write labels to a file on computer
         file_to_write = 'dataset.txt'
         print("Writing to file: ", file_to_write)
         with open(file_to_write, 'w') as f:
@@ -142,19 +137,19 @@ def main(argv):
                 data = np.array(data)
 
                 # Perform filtering
-                data = bandpass(data, sampling_frequency)
-                data = notch(data, sampling_frequency)
+                data = bandpass(data, args.hz)
+                data = notch(data, args.hz)
 
                 # Perform segmentation
                 segment_arr = data_segmentation(
-                    data, sampling_frequency, window_size, overlap, number_classes)
+                    data, args.hz, args.ws, args.ol, args.nc)
 
                 # Performs feature extraction
-                segment_arr = fe(segment_arr, sampling_frequency)
+                segment_arr = fe(segment_arr, args.hz)
 
                 # Perform PCA
                 segment_arr = pca_func(
-                    segment_arr, number_principal_components)
+                    segment_arr, args.pcanc)
 
                 # The model predicts which class the data belongs to
                 prediction = model.evaluateAll(segment_arr)
@@ -168,8 +163,6 @@ def main(argv):
         print("Ending program...")
         f.close()
         os._exit(os.EX_OK)
-
-
 # ==============================================================================
 if __name__ == "__main__":
     main(sys.argv[1:])
