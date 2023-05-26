@@ -19,6 +19,8 @@ from dimension.dimension import pca_func
 from jpmml_evaluator import make_evaluator
 # ==============================================================================
 # Function to read the keyboard inputs
+
+
 def readKey():
     global label
     while True:
@@ -49,6 +51,8 @@ def readKey():
             label = 0
 # ==============================================================================
 # Loads the trained model
+
+
 def load_model(file_name):
     tf_model = 0
     if (tf_model):
@@ -65,6 +69,8 @@ def load_model(file_name):
 
 # ==============================================================================
 # Main function
+
+
 def main(argv):
     parser = argparse.ArgumentParser(
         prog="main.py", description="EMG finger movement classification")
