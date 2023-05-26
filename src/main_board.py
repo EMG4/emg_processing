@@ -8,7 +8,7 @@ import numpy as np
 import argparse
 import sys
 # import tensorflow as tf
-# import os
+import os
 import time
 import threading
 import keyboard as kb
@@ -83,7 +83,7 @@ def main(argv):
                         help="Write the classification and keyboard input to file, needs to be run as root")
 
     args = parser.parse_args(argv)
-    if not (args.p or not args.w):
+    if not (args.p or args.w):
         parser.error("Choose mode to run, -p or -w\nExiting...")
 
     file_name = args.f
@@ -170,6 +170,7 @@ def main(argv):
                 f.flush()
         t1.join()
         f.close()
+
 # ==============================================================================
 if __name__ == "__main__":
     main(sys.argv[1:])
