@@ -8,6 +8,7 @@
 
 from collection.data_collection import load_data
 import os
+import sys
 import numpy as np
 import keyboard as kb
 import threading
@@ -113,12 +114,12 @@ def main():
             f.write(toPrint+'\n')
             f.flush()
             # f.write(toPrint + '\t' + str(label)+'\n')
-           
-    t1.join()
+    print("Ending program...")
+    #t1.join()
     f.close()
+    os._exit(os.EX_OK)
 
 #==============================================================================
 if __name__ == "__main__":
     main()
 #==============================================================================
-
