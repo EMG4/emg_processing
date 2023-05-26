@@ -30,11 +30,10 @@ class ReadLine:
                 self.buf.extend(data)
 #==============================================================================
 # Function for reading data
-def load_data():
+def load_data(number_samples_to_load):
     read_voltage_from_adc = ReadLine(ser)
     sample_counter = 0
     buf = []
-    number_samples_to_load = 377
     while sample_counter < number_samples_to_load:
         read_voltage_from_adc = ser.readline()
         read_voltage_from_adc = read_voltage_from_adc.decode('utf-8').rstrip('\n').rstrip('\r')
