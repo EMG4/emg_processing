@@ -25,10 +25,29 @@ from jpmml_evaluator import make_evaluator
 running = True
 
 # ==============================================================================
+# Function to calculate the accuracy when using --w True
+
+
+def count_equal_rows(file_path):
+    count = 0
+    nr_rows = 0
+    with open(file_path, 'r') as file:
+        for line in file:
+            row = line.strip().split()
+            if len(row) != 2:
+                continue  # Skip rows with invalid format
+            if row[0] == row[1]:
+                count += 1
+            nr_rows += 1
+    return count/nr_rows
+# ==============================================================================
 # Signal handler function to handle SIGINT signal
+
+
 def sigint_handler(signum, frame):
     global running
     running = False
+
 
 # ==============================================================================
 # Register the signal handler
@@ -36,6 +55,8 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 # ==============================================================================
 # Function to read the keyboard inputs
+
+
 def readKey():
     global label
     while True:
@@ -66,6 +87,8 @@ def readKey():
             label = 0
 # ==============================================================================
 # Loads the trained model
+
+
 def load_model(file_name):
     tf_model = 0
     if (tf_model):
@@ -81,19 +104,32 @@ def load_model(file_name):
         return clf
 # ==============================================================================
 # Main function
-def main(argv):
-    parser = argparse.ArgumentParser(prog="main_board.py", description="EMG finger movement classification on a microcontroller")
 
-    parser.add_argument('--f', required=True, type=str, help="Enter filepath of pmml-model to load")
-    parser.add_argument('--d', required=True, type=str, help="Enter filepath of UART")
-    parser.add_argument('--p', default=False, type=bool, help="Printing the classification, tested on beaglebone green")
-    parser.add_argument('--w', default=False, type=bool, help="Write the classification and keyboard input to file, needs to be run as root")
-    parser.add_argument('--hz', default=1000, type = int, help = "Set sampling rate")
-    parser.add_argument('--ws', default=0.250, type = float, help = "Set window size (s)")
-    parser.add_argument('--ol', default=0.125, type = float, help = "Set window overlap (s)")
-    parser.add_argument('--nc', default=11, type = int, help = "Set number of classes")
-    parser.add_argument('--pcanc', default=2, type = int, help = "Set number of PCA components")
-    parser.add_argument('--nrs', default=377, type = int, help = "Set number of samples to load")
+
+def main(argv):
+    parser = argparse.ArgumentParser(
+        prog="main_board.py", description="EMG finger movement classification on a microcontroller")
+
+    parser.add_argument('--f', required=True, type=str,
+                        help="Enter filepath of pmml-model to load")
+    parser.add_argument('--d', required=True, type=str,
+                        help="Enter filepath of UART")
+    parser.add_argument('--p', default=False, type=bool,
+                        help="Printing the classification, tested on beaglebone green")
+    parser.add_argument('--w', default=False, type=bool,
+                        help="Write the classification and keyboard input to file, needs to be run as root")
+    parser.add_argument('--hz', default=1000, type=int,
+                        help="Set sampling rate")
+    parser.add_argument('--ws', default=0.250, type=float,
+                        help="Set window size (s)")
+    parser.add_argument('--ol', default=0.125, type=float,
+                        help="Set window overlap (s)")
+    parser.add_argument('--nc', default=11, type=int,
+                        help="Set number of classes")
+    parser.add_argument('--pcanc', default=2, type=int,
+                        help="Set number of PCA components")
+    parser.add_argument('--nrs', default=377, type=int,
+                        help="Set number of samples to load")
 
     args = parser.parse_args(argv)
 
@@ -101,8 +137,8 @@ def main(argv):
     if not (args.p or args.w):
         parser.error("Choose mode to run, --p True or --w True\nExiting...")
     elif not args.d:
-        parser.error("Please specify directory for the serial device\nExiting...")
-
+        parser.error(
+            "Please specify directory for the serial device\nExiting...")
 
     # Load trained classifier
     time_to_load_model = time.time()
@@ -115,7 +151,7 @@ def main(argv):
 
         time_to_make_classification = time.time()
         while (running):
-                        # Load data
+            # Load data
             data = load_data(args.nrs, args.d)
             data = np.array(data)
 
@@ -124,7 +160,8 @@ def main(argv):
             data = notch(data, args.hz)
 
             # Perform segmentation
-            segment_arr = data_segmentation(data, args.hz, args.ws, args.ol, args.nc)
+            segment_arr = data_segmentation(
+                data, args.hz, args.ws, args.ol, args.nc)
 
             # Performs feature extraction
             segment_arr = fe(segment_arr, args.hz)
@@ -135,7 +172,8 @@ def main(argv):
             # The model predicts which class the data belongs to
             prediction = model.evaluateAll(segment_arr)
             print(prediction[['Integer labels']])
-            print(f"Classification took: {time.time()-time_to_make_classification:.1f}s")
+            print(
+                f"Classification took: {time.time()-time_to_make_classification:.1f}s")
             time_to_make_classification = time.time()
     # Write to file on computer
     elif args.w:
@@ -148,7 +186,7 @@ def main(argv):
         file_to_write = 'dataset.txt'
         print("Writing to file: ", file_to_write)
         with open(file_to_write, 'w') as f:
-            while True:
+            while running:
                 # Load data
                 data = load_data(args.nrs, args.d)
                 data = np.array(data)
@@ -177,9 +215,14 @@ def main(argv):
                     break
                 f.write(toPrint+'\n')
                 f.flush()
+
         f.close()
+        result = count_equal_rows(file_to_write)
+        print("\nAccuracy: "+ str(result*100)+"%")
     print("Ending program...")
     os._exit(os.EX_OK)
+
+
 # ==============================================================================
 if __name__ == "__main__":
     main(sys.argv[1:])
