@@ -8,6 +8,7 @@
 
 import numpy as np
 import argparse
+import datetime
 import sys
 import os
 import time
@@ -144,7 +145,10 @@ def main(argv):
     time_to_load_model = time.time()
     print("Loading Model: ", args.f)
     model = load_model(args.f)
-    print(f"Model loaded in: {time.time()-time_to_load_model:.1f}s")
+    time_for_classification = str(datetime.timedelta(
+        seconds=(time.time()-time_to_load_model)))
+    print("Model loaded in:", time_for_classification)
+    # print(f"Model loaded in: {time.time()-time_to_load_model:.1f}s")
     input("Press enter to start classification...")
     # Run classification on the microcontroller
     if args.p:
