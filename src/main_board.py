@@ -152,6 +152,7 @@ def main(argv):
         time_to_make_classification = time.time()
         while (running):
             # Load data
+            print("Taking new samples")
             data = load_data(args.nrs, args.d)
             data = np.array(data)
 
@@ -182,12 +183,14 @@ def main(argv):
         t1 = threading.Thread(target=readKey)
         t1.start()
         header = ["Integer labels", "key"]
+        time_to_make_classification = time.time()
         # Write labels to a file on computer
         file_to_write = 'dataset.txt'
         print("Writing to file: ", file_to_write)
         with open(file_to_write, 'w') as f:
             while running:
                 # Load data
+                print("Taking new samples")
                 data = load_data(args.nrs, args.d)
                 data = np.array(data)
 
@@ -213,12 +216,16 @@ def main(argv):
                     header=False, index=False, columns=header)
                 if (label == 11):
                     break
+                print(
+                    f"Classification took: {time.time()-time_to_make_classification:.1f}s")
+                time_to_make_classification = time.time()
+
                 f.write(toPrint+'\n')
                 f.flush()
 
         f.close()
         result = count_equal_rows(file_to_write)
-        print("\nAccuracy: "+ str(result*100)+"%")
+        print("\nAccuracy: " + str(result*100)+"%")
     print("Ending program...")
     os._exit(os.EX_OK)
 
